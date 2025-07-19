@@ -1,0 +1,12 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - node_modules:/form-management/node_modules
+    ports:
+      - "4200:80"
+
+volumes:
+  node_modules:

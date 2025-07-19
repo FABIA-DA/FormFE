@@ -1,0 +1,4 @@
+*.md
+*.adoc
+
+node_modules/
