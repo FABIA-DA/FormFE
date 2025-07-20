@@ -1,0 +1,16 @@
+mat-toolbar {
+  background-color: var(--mat-sys-primary-container);
+}
+
+mat-toolbar > a {
+  text-decoration: none;
+  color: var(--mat-sys-primary-text);
+}
+
+mat-toolbar > * {
+  margin-right: 0.3rem;
+}
+
+.component-container {
+  margin: 1rem;
+}
