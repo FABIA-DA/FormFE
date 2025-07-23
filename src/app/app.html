@@ -3,8 +3,15 @@
     <mat-icon>menu</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    <app-menu-link icon="add" route="add">Add</app-menu-link>
-    <app-menu-link icon="list" route="forms">Forms</app-menu-link>
+    <app-menu-trigger [icon]="'add'" [menuTriggerFor]="add">Add</app-menu-trigger>
+    <app-menu-trigger [icon]="'list'" [menuTriggerFor]="list">List</app-menu-trigger>
+  </mat-menu>
+  <mat-menu #add="matMenu">
+    <a mat-menu-item [routerLink]="">Form</a>
+    <a mat-menu-item [routerLink]="'add-form-field'">Form Field</a>
+  </mat-menu>
+  <mat-menu #list="matMenu">
+
   </mat-menu>
   <a [routerLink]="['home']">Form Management</a>
 </mat-toolbar>
