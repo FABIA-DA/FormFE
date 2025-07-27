@@ -5,32 +5,50 @@
       <mat-form-field>
         <mat-label>Name</mat-label>
         <input type="text" matInput formControlName="name">
-        @if(oneOfFieldForm.get('name')?.hasError('required'))
-        {
+        @if (oneOfFieldForm.get('name')?.hasError('required')) {
           <mat-error>The name is required</mat-error>
         }
       </mat-form-field>
-      @for(item of Array(2); let idx = $index; track idx){
-        <mat-divider></mat-divider>
-        <mat-form-field>
-          <mat-label>{{idx + 1}}.Option</mat-label>
-          <input type="text" matInput [formControlName]="`option${idx}`">
-          @if(oneOfFieldForm.get(`option${idx}`)?.hasError('required'))
-          {
-            <mat-error>The {{idx + 1}}.Option is required</mat-error>
-          }
-        </mat-form-field>
-        <div>
-          <button mat-button (click)="addFormField(idx)">Edit</button>
-          @for(field of fields[idx]; track field)
-          {
-            <span>{{field.name}}</span>
-            <button matIconButton>
-              <mat-icon>delete</mat-icon>
-            </button>
-          }
+      <div formArrayName="options">
+        @for (option of options.controls; track $index; let idx = $index) {
+          <div>
+            <mat-divider></mat-divider>
+            <div class="option-edit-container">
+              <mat-form-field>
+                <mat-label>{{ idx + 1 }}.Option</mat-label>
+                <input type="text" matInput [formControlName]="idx">
+                @if (options.at(idx).hasError('required')) {
+                  <mat-error>The {{ idx + 1 }}.Option is required</mat-error>
+                }
+              </mat-form-field>
+              <div class="button-wrapper">
+                @if (idx > 1) {
+                  <button matButton="elevated" (click)="deleteOption(idx)">Delete</button>
+                }
+                <button matButton="elevated" (click)="addField(idx)">Edit</button>
+              </div>
+            </div>
+            <div class="fields-container">
+              @for (field of fields[idx](); track field; let fieldIdx = $index) {
+                <div class="field-wrapper">
+                  <span>{{ field.name }}</span>
+                  <button matIconButton (click)="deleteField(idx, fieldIdx)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+        <div class="next-button-wrapper">
+          <button matIconButton (click)="addOption()">
+            <mat-icon>add</mat-icon>
+          </button>
         </div>
-      }
+      </div>
     </form>
   </mat-card-content>
+  <mat-card-actions>
+    <button matButton="filled" (click)="submitFormField()" [disabled]="!this.isValid()">Submit</button>
+  </mat-card-actions>
 </mat-card>

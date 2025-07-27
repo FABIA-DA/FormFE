@@ -65,6 +65,7 @@ export class AddFormField {
     }
 
     const formField: FormField = {
+      id: 0,
       name: name,
       description: description,
       isOptional: isOptional,

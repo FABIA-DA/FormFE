@@ -1,0 +1,61 @@
+mat-card {
+  width: 50%;
+  padding: 1rem;
+}
+
+form > * {
+  margin: 1rem;
+}
+
+mat-divider {
+  margin: 1rem;
+}
+
+.option-edit-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.fields-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.field-wrapper > span {
+  align-self: center;
+}
+
+.field-wrapper:hover {
+  background-color: lightgray;
+}
+
+.field-wrapper > button {
+  color: red;
+}
+
+.button-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.button-wrapper > button {
+  margin: 0.5rem;
+}
+
+.next-button-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.next-button-wrapper > button {
+  border: 1px solid black;
+}

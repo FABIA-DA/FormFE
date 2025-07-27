@@ -23,6 +23,7 @@ export interface OneOfField {
 }
 
 export interface FormField {
+  id: number,
   name: string;
   description: string | null,
   isOptional: boolean,
