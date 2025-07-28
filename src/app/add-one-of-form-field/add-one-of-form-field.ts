@@ -1,15 +1,14 @@
-import {Component, computed, inject, Signal, signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, OnInit, Signal, signal, WritableSignal} from '@angular/core';
 import {MatCard, MatCardActions, MatCardContent, MatCardTitle} from '@angular/material/card';
 import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatFormField, MatInputModule, MatLabel} from '@angular/material/input';
-import {MatDivider} from '@angular/material/divider';
-import {MatButton, MatIconButton} from '@angular/material/button';
-import {MatIcon} from '@angular/material/icon';
-import {MatDialog} from '@angular/material/dialog';
-import {FormField, OneOfField} from '../../../core/module';
-import {DialogSelectFormField} from '../../../core/shared/dialog-select-form-field/dialog-select-form-field';
+import {MatButton} from '@angular/material/button';
+import {DataFormField, OneOfField} from '../../../core/module';
 import {SnackbarService} from '../../../core/service/snackbar-service';
 import {toSignal} from '@angular/core/rxjs-interop';
+import {ItemSelectionList} from '../../../core/shared/item-selection-list/item-selection-list.component';
+import {AddMoreButton} from '../../../core/shared/add-more-button/add-more-button';
+import {FormService} from '../../../core/service/form-service';
 
 @Component({
   selector: 'app-add-one-of-form-field',
@@ -22,18 +21,15 @@ import {toSignal} from '@angular/core/rxjs-interop';
     MatFormField,
     MatLabel,
     MatInputModule,
-    MatDivider,
     MatButton,
-    MatIcon,
-    MatIconButton,
     MatCardActions,
+    ItemSelectionList,
+    AddMoreButton,
   ],
   templateUrl: './add-one-of-form-field.html',
   styleUrl: './add-one-of-form-field.scss'
 })
-export class AddOneOfFormField {
-  private readonly snackbar: SnackbarService = inject(SnackbarService);
-  private readonly dialog: MatDialog = inject(MatDialog);
+export class AddOneOfFormField implements OnInit {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly oneOfFieldForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
@@ -42,15 +38,19 @@ export class AddOneOfFormField {
       this.createOption()
     ])
   });
-  protected readonly fields: WritableSignal<FormField[]>[] = [
-    signal([]),
-    signal([])
-  ];
-  private readonly change: Signal<any> = toSignal(this.oneOfFieldForm.valueChanges);
+  protected fields: WritableSignal<DataFormField[]>[] = AddOneOfFormField.initFields();
   protected readonly isValid: Signal<boolean> = computed(() => {
     this.change();
     return this.oneOfFieldForm.valid;
   });
+  protected readonly possibleDataFields: WritableSignal<DataFormField[]> = signal([]);
+  private readonly change: Signal<any> = toSignal(this.oneOfFieldForm.valueChanges);
+  private readonly snackbar: SnackbarService = inject(SnackbarService);
+  private readonly service: FormService = inject(FormService);
+
+  public async ngOnInit(): Promise<void> {
+    this.possibleDataFields.set(await this.service.getDataFields());
+  }
 
   private createOption(): FormControl {
       return this.formBuilder.control('', Validators.required);
@@ -64,37 +64,7 @@ export class AddOneOfFormField {
     this.options.push(
       this.createOption()
     );
-    this.fields.push(signal([]));
-  }
-
-  protected addField(id: number): void {
-    const option = this.options.at(id) as FormGroup;
-    if(!option){
-      return;
-    }
-
-    const fieldsOfOption = this.fields.at(id);
-    if(!fieldsOfOption){
-      return;
-    }
-
-    const dialogData: AlreadySelectedFields = {
-      fields: fieldsOfOption()
-    };
-
-    const dialogRef = this.dialog.open(DialogSelectFormField, {
-      data: dialogData
-    });
-
-    dialogRef.afterClosed().subscribe((result: FormField[]) => {
-      if(!result){
-        return;
-      }
-
-      const current: FormField[] = fieldsOfOption();
-      const newFields: FormField[] = result.filter(f => !current.includes(f));
-      fieldsOfOption.set(newFields);
-    });
+    this.fields.push(AddOneOfFormField.getFieldSignal());
   }
 
   protected deleteOption(id: number): void {
@@ -105,17 +75,6 @@ export class AddOneOfFormField {
     this.options.removeAt(id);
 
     this.fields.splice(id, 1);
-  }
-
-  protected deleteField(id: number, fieldId: number): void {
-    const fieldsOfOption = this.fields.at(id);
-    if(!fieldsOfOption){
-      return;
-    }
-
-    let updatedFields: FormField[] = fieldsOfOption();
-    updatedFields.splice(fieldId, 1);
-    fieldsOfOption.set(updatedFields);
   }
 
   protected async submitFormField(): Promise<void> {
@@ -133,25 +92,36 @@ export class AddOneOfFormField {
       return;
     }
 
-    let map: Map<string, FormField[]> = new Map();
+    let map: Map<string, DataFormField[]> = new Map();
 
     for(let i = 0; i < this.options.length && i < this.fields.length; i++){
       map.set(options.at(i)!, this.fields[i]());
     }
 
     let oneOfFormField: OneOfField = {
+      id: 0,
       name: name,
       optionsMap: map
     }
 
-    //TODO submit one-of-form-field
+    await this.service.sendOneOfFormField(oneOfFormField);
     this.snackbar.show('The field was submitted successfully');
-    this.oneOfFieldForm.reset();
+    this.resetForm();
   }
 
-  protected readonly Array = Array;
-}
+  private resetForm(): void {
+    this.oneOfFieldForm.reset();
+    this.fields = AddOneOfFormField.initFields();
+  }
 
-export type AlreadySelectedFields = {
-  fields: FormField[];
+  private static initFields(): WritableSignal<DataFormField[]>[] {
+    return [
+      this.getFieldSignal(),
+      this.getFieldSignal()
+    ];
+  }
+
+  private static getFieldSignal(): WritableSignal<DataFormField[]> {
+    return signal<DataFormField[]>([]);
+  }
 }

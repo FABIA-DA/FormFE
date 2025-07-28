@@ -1,0 +1,9 @@
+.next-button-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.next-button-wrapper > button {
+  border: 1px solid black;
+}

@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Select items</h1>
+<mat-dialog-content>
+  @if(this.possibleItems().length === 0){
+    <span>No items :(</span>
+  }
+  @else{
+    <mat-selection-list [multiple]="true" [(ngModel)]="selectedItems" [compareWith]="compareItems">
+      @for (item of this.possibleItems(); track item) {
+        <mat-list-option [selected]="" [value]="item">{{ item.name }}</mat-list-option>
+      }
+    </mat-selection-list>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button matButton="filled" [mat-dialog-close]="selectedItems()" cdkFocusInitial>Ok</button>
+</mat-dialog-actions>

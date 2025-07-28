@@ -1,4 +1,4 @@
-import {Component, computed, inject, Signal} from '@angular/core';
+import {Component, computed, inject, OnInit, signal, Signal, WritableSignal} from '@angular/core';
 import {MatCard, MatCardActions, MatCardContent, MatCardTitle} from '@angular/material/card';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatError, MatFormField, MatInputModule, MatLabel} from '@angular/material/input';
@@ -7,7 +7,8 @@ import {MatOption, MatSelect} from '@angular/material/select';
 import {MatButton} from '@angular/material/button';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {SnackbarService} from '../../../core/service/snackbar-service';
-import {FormField} from '../../../core/module';
+import {DataFormField} from '../../../core/module';
+import {FormService} from '../../../core/service/form-service';
 
 @Component({
   selector: 'app-add-form-field',
@@ -29,7 +30,7 @@ import {FormField} from '../../../core/module';
   templateUrl: './add-form-field.html',
   styleUrl: './add-form-field.scss'
 })
-export class AddFormField {
+export class AddFormField implements OnInit {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly fieldForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
@@ -37,12 +38,18 @@ export class AddFormField {
     isOptional: [false, Validators.required],
     type: ['', Validators.required]
   });
-  private readonly valueChanged: Signal<any> = toSignal(this.fieldForm.valueChanges);
   protected readonly isValid: Signal<boolean> = computed(() => {
     this.valueChanged();
     return this.fieldForm.valid;
   });
+  protected readonly fieldTypes: WritableSignal<string[]> = signal([]);
+  private readonly valueChanged: Signal<any> = toSignal(this.fieldForm.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
+  private readonly service: FormService = inject(FormService);
+
+  public async ngOnInit(): Promise<void> {
+    this.fieldTypes.set(await this.service.getDataFieldTypes());
+  }
 
   protected async onSubmit(): Promise<void>
   {
@@ -64,7 +71,7 @@ export class AddFormField {
       return;
     }
 
-    const formField: FormField = {
+    const formField: DataFormField = {
       id: 0,
       name: name,
       description: description,
@@ -72,7 +79,7 @@ export class AddFormField {
       type: type
     };
 
-    //TODO send request
+    await this.service.sendDataField(formField);
 
     this.snackbar.show('Form field was submitted successfully.');
     this.fieldForm.reset();

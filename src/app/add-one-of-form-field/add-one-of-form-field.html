@@ -11,41 +11,21 @@
       </mat-form-field>
       <div formArrayName="options">
         @for (option of options.controls; track $index; let idx = $index) {
-          <div>
-            <mat-divider></mat-divider>
-            <div class="option-edit-container">
-              <mat-form-field>
-                <mat-label>{{ idx + 1 }}.Option</mat-label>
-                <input type="text" matInput [formControlName]="idx">
-                @if (options.at(idx).hasError('required')) {
-                  <mat-error>The {{ idx + 1 }}.Option is required</mat-error>
-                }
-              </mat-form-field>
-              <div class="button-wrapper">
-                @if (idx > 1) {
-                  <button matButton="elevated" (click)="deleteOption(idx)">Delete</button>
-                }
-                <button matButton="elevated" (click)="addField(idx)">Edit</button>
-              </div>
-            </div>
-            <div class="fields-container">
-              @for (field of fields[idx](); track field; let fieldIdx = $index) {
-                <div class="field-wrapper">
-                  <span>{{ field.name }}</span>
-                  <button matIconButton (click)="deleteField(idx, fieldIdx)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
+          <app-item-selection-list [possibleItems]="this.possibleDataFields()" [(items)]="this.fields[idx]">
+            <mat-form-field>
+              <mat-label>{{ idx + 1 }}.Option</mat-label>
+              <input type="text" matInput [formControlName]="idx">
+              @if (options.at(idx).hasError('required')) {
+                <mat-error>The {{ idx + 1 }}.Option is required</mat-error>
               }
-            </div>
-          </div>
+            </mat-form-field>
+            @if (idx > 1) {
+              <button matButton="elevated" (click)="deleteOption(idx)">Delete</button>
+            }
+          </app-item-selection-list>
         }
-        <div class="next-button-wrapper">
-          <button matIconButton (click)="addOption()">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
       </div>
+      <app-add-more-button (onClick)="addOption()"/>
     </form>
   </mat-card-content>
   <mat-card-actions>

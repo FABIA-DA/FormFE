@@ -1,0 +1,24 @@
+<mat-card>
+  <mat-card-title>Add Form</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="formForm">
+      <div class="form-field-container">
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name">
+          @if(this.formForm.get('name')?.hasError('required')){
+            <mat-error>Name is required</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Info</mat-label>
+          <textarea matInput formControlName="info"></textarea>
+        </mat-form-field>
+      </div>
+      <app-item-selection-list [(items)]="this.selectedFieldGroups" [possibleItems]="this.possibleFieldGroups()"/>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <button matButton="filled" [disabled]="!this.isValid()" (click)="submitForm()">Submit</button>
+  </mat-card-actions>
+</mat-card>

@@ -7,9 +7,10 @@
     <app-menu-trigger [icon]="'list'" [menuTriggerFor]="list">List</app-menu-trigger>
   </mat-menu>
   <mat-menu #add="matMenu">
-    <a mat-menu-item [routerLink]="">Form</a>
-    <a mat-menu-item [routerLink]="'add-one-of-form-field'">One-of-Form-Field</a>
     <a mat-menu-item [routerLink]="'add-form-field'">Form Field</a>
+    <a mat-menu-item [routerLink]="'add-one-of-form-field'">One-of-Form-Field</a>
+    <a mat-menu-item [routerLink]="'add-field-group'">Form Group</a>
+    <a mat-menu-item [routerLink]="'add-form'">Form</a>
   </mat-menu>
   <mat-menu #list="matMenu">
 

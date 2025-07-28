@@ -1,11 +1,13 @@
 export interface Form {
+  id: number,
   name: string,
   info: string,
-  receiver: Receiver
+  //receiver: Receiver
   groups: FieldGroup[]
 }
 
 export interface Receiver {
+  id: number,
   name: string,
   postCode: string,
   streetName: string,
@@ -13,18 +15,21 @@ export interface Receiver {
 }
 
 export interface FieldGroup {
+  id: number,
   name: string,
-  fields: Array<FormField | OneOfField>
-}
-
-export interface OneOfField {
-  name: string,
-  optionsMap: Map<string, Array<FormField>>
+  fields: Array<OneOfField | DataFormField>
 }
 
 export interface FormField {
   id: number,
-  name: string;
+  name: string
+}
+
+export interface OneOfField extends FormField {
+  optionsMap: Map<string, DataFormField[]>
+}
+
+export interface DataFormField extends FormField {
   description: string | null,
   isOptional: boolean,
   type: string
