@@ -2,7 +2,6 @@ export interface Form {
   id: number,
   name: string,
   info: string,
-  //receiver: Receiver
   groups: FieldGroup[]
 }
 
