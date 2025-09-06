@@ -3,15 +3,16 @@ import {MatCard, MatCardActions, MatCardContent, MatCardTitle} from '@angular/ma
 import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatFormField, MatInputModule, MatLabel} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
-import {DataFormField, OneOfField} from '../../../core/module';
 import {SnackbarService} from '../../../core/service/snackbar-service';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ItemSelectionList} from '../../../core/shared/item-selection-list/item-selection-list.component';
 import {AddMoreButton} from '../../../core/shared/add-more-button/add-more-button';
-import {FormService} from '../../../core/service/form-service';
+import {Field, FieldService} from '../../../core/service/field-service';
+import {SingleChoiceFieldService} from '../../../core/service/single-choice-field-service';
+import {IdType} from '../../../core/service/base-service';
 
 @Component({
-  selector: 'app-add-one-of-form-field',
+  selector: 'app-add-single-choice-field',
   standalone: true,
   imports: [
     MatCardTitle,
@@ -26,10 +27,10 @@ import {FormService} from '../../../core/service/form-service';
     ItemSelectionList,
     AddMoreButton,
   ],
-  templateUrl: './add-one-of-form-field.html',
-  styleUrl: './add-one-of-form-field.scss'
+  templateUrl: './add-single-choice-field.component.html',
+  styleUrl: './add-single-choice-field.component.scss'
 })
-export class AddOneOfFormField implements OnInit {
+export class AddSingleChoiceField implements OnInit {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly oneOfFieldForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
@@ -38,22 +39,23 @@ export class AddOneOfFormField implements OnInit {
       this.createOption()
     ])
   });
-  protected fields: WritableSignal<DataFormField[]>[] = AddOneOfFormField.initFields();
+  protected fields: WritableSignal<Field[]>[] = AddSingleChoiceField.initFields();
   protected readonly isValid: Signal<boolean> = computed(() => {
     this.change();
     return this.oneOfFieldForm.valid;
   });
-  protected readonly possibleDataFields: WritableSignal<DataFormField[]> = signal([]);
+  protected readonly possibleFields: WritableSignal<Field[]> = signal([]);
   private readonly change: Signal<any> = toSignal(this.oneOfFieldForm.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
-  private readonly service: FormService = inject(FormService);
+  private readonly singleChoiceFieldService: SingleChoiceFieldService = inject(SingleChoiceFieldService);
+  private readonly fieldService: FieldService = inject(FieldService);
 
   public async ngOnInit(): Promise<void> {
-    this.possibleDataFields.set(await this.service.getDataFields());
+    this.possibleFields.set(await this.fieldService.getAllFieldsAsync());
   }
 
   private createOption(): FormControl {
-      return this.formBuilder.control('', Validators.required);
+    return this.formBuilder.control('', Validators.required);
   }
 
   protected get options(): FormArray {
@@ -64,11 +66,11 @@ export class AddOneOfFormField implements OnInit {
     this.options.push(
       this.createOption()
     );
-    this.fields.push(AddOneOfFormField.getFieldSignal());
+    this.fields.push(AddSingleChoiceField.getFieldSignal());
   }
 
   protected deleteOption(id: number): void {
-    for(let i = id; i < this.options.length -1; i++){
+    for (let i = id; i < this.options.length - 1; i++) {
       this.options.at(i).setValue(this.options.at(i + 1).value);
     }
 
@@ -78,50 +80,52 @@ export class AddOneOfFormField implements OnInit {
   }
 
   protected async submitFormField(): Promise<void> {
-    if(!this.isValid()){
+    if (!this.isValid()) {
       return;
     }
 
-    const name: string | undefined = this.oneOfFieldForm.get('name')?.value;
-    const options: Array<string | undefined> = this.oneOfFieldForm.get('options')?.value;
+    const name: string | null = this.oneOfFieldForm.get('name')?.value;
+    const optionNames: string[] | null = this.oneOfFieldForm.get('options')?.value;
 
-    if(name === undefined
-    || options.some(o => o === undefined))
-    {
+    const selectedFields: Field[][] = this.fields.map(arr => arr());
+
+    if (name === null
+      || optionNames === null
+      || optionNames.some(o => o === null)
+      || selectedFields.flatMap(arr => arr)
+        .some(f => f === null || f === undefined)) {
       this.snackbar.show('The form is still invalid');
       return;
     }
 
-    let map: Map<string, DataFormField[]> = new Map();
+    const fieldIds: IdType[][] = selectedFields.map(arr => arr.map(f => f.id));
+    let options: { name: string, fieldIds: IdType[] }[] = [];
 
-    for(let i = 0; i < this.options.length && i < this.fields.length; i++){
-      map.set(options.at(i)!, this.fields[i]());
+    for (let i = 0; i < this.options.length && i < this.fields.length; i++) {
+      options.push({
+        name: optionNames[i],
+        fieldIds: fieldIds[i]
+      });
     }
 
-    let oneOfFormField: OneOfField = {
-      id: 0,
-      name: name,
-      optionsMap: map
-    }
-
-    await this.service.sendOneOfFormField(oneOfFormField);
+    await this.singleChoiceFieldService.createSingleChoiceFieldAsync(name, options);
     this.snackbar.show('The field was submitted successfully');
     this.resetForm();
   }
 
   private resetForm(): void {
     this.oneOfFieldForm.reset();
-    this.fields = AddOneOfFormField.initFields();
+    this.fields = AddSingleChoiceField.initFields();
   }
 
-  private static initFields(): WritableSignal<DataFormField[]>[] {
+  private static initFields(): WritableSignal<Field[]>[] {
     return [
       this.getFieldSignal(),
       this.getFieldSignal()
     ];
   }
 
-  private static getFieldSignal(): WritableSignal<DataFormField[]> {
-    return signal<DataFormField[]>([]);
+  private static getFieldSignal(): WritableSignal<Field[]> {
+    return signal<Field[]>([]);
   }
 }

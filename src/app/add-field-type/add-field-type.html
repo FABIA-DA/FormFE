@@ -1,0 +1,28 @@
+<mat-card>
+  <mat-card-title>Add Field Type</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="fieldTypeForm">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input type="text" matInput formControlName="name">
+        @if(fieldTypeForm.get('name')?.hasError('required')){
+          <mat-error>The name is required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea type="text" matInput formControlName="description"></textarea>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Regex</mat-label>
+        <input type="text" matInput formControlName="regex">
+        @if(fieldTypeForm.get('regex')?.hasError('required')){
+          <mat-error>The regex is required</mat-error>
+        }
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <button matButton="filled" (click)="onSubmit()" [disabled]="!isValid()">Submit</button>
+  </mat-card-actions>
+</mat-card>

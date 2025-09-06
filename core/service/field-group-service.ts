@@ -1,4 +1,4 @@
-import {BaseService} from './base-service';
+import {BaseService, IdType, IdTypeZod} from './base-service';
 import {z} from 'zod';
 import {FieldZod} from './field-service';
 import {SingleChoiceFieldZod} from './single-choice-field-service';
@@ -15,7 +15,7 @@ export class FieldGroupService extends BaseService {
   }
 
   public async getAllFieldGroupsAsync(): Promise<FieldGroup[]> {
-    return await this.trySendRequest(async (): Promise<FieldGroup[]> => {
+    return await BaseService.trySendRequest(async (): Promise<FieldGroup[]> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: FieldGroupListResponse = FieldGroupListResponseZod.parse(response.body);
@@ -24,8 +24,8 @@ export class FieldGroupService extends BaseService {
     }, 'Error while trying to get all field groups.');
   }
 
-  public async getFieldGroupByIdAsync(id: string | number): Promise<FieldGroup> {
-    return await this.trySendRequest(async (): Promise<FieldGroup> => {
+  public async getFieldGroupByIdAsync(id: IdType): Promise<FieldGroup> {
+    return await BaseService.trySendRequest(async (): Promise<FieldGroup> => {
       const url: string = this.buildUrl(id.toString());
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: FieldGroup = FieldGroupZod.parse(response.body);
@@ -34,8 +34,8 @@ export class FieldGroupService extends BaseService {
     }, `Error while trying to get field group with id ${id}.`);
   }
 
-  public async createFieldGroupAsync(name: string, singleChoiceFieldIds: (string | number)[], fieldIds: (string | number)[]): Promise<FieldGroup> {
-    return await this.trySendRequest(async (): Promise<FieldGroup> => {
+  public async createFieldGroupAsync(name: string, singleChoiceFieldIds: (IdType)[], fieldIds: (IdType)[]): Promise<FieldGroup> {
+    return await BaseService.trySendRequest(async (): Promise<FieldGroup> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.post(url, {
         name: name,
@@ -48,8 +48,8 @@ export class FieldGroupService extends BaseService {
     }, 'Error while trying to create field group.');
   }
 
-  public async updateFieldGroupByIdAsync(id: string | number, name: string, singleChoiceFieldIds: (string | number)[], fieldIds: (string | number)[]): Promise<void> {
-    return await this.trySendRequest(async (): Promise<void> => {
+  public async updateFieldGroupByIdAsync(id: IdType, name: string, singleChoiceFieldIds: (IdType)[], fieldIds: (IdType)[]): Promise<void> {
+    return await BaseService.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.put(url, {
         name: name,
@@ -59,8 +59,8 @@ export class FieldGroupService extends BaseService {
     }, `Error while trying to update field group with id ${id}.`);
   }
 
-  public async deleteFieldGroupByIdAsync(id: string | number): Promise<void> {
-    return await this.trySendRequest(async (): Promise<void> => {
+  public async deleteFieldGroupByIdAsync(id: IdType): Promise<void> {
+    return await BaseService.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.delete(url, {observe: 'response'}));
     }, `Error while trying to delete field group with id ${id}.`);
@@ -68,7 +68,7 @@ export class FieldGroupService extends BaseService {
 }
 
 export const FieldGroupZod = z.object({
-  id: z.union([z.string().nonempty(), z.number().nonnegative().gt(0)]),
+  id: IdTypeZod,
   name: z.string().nonempty(),
   singleChoiceFields: z.array(SingleChoiceFieldZod),
   fields: z.array(FieldZod)

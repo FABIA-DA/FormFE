@@ -1,8 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {ZodError} from 'zod';
-import {firstValueFrom} from 'rxjs';
-import {FieldTypeListResponse} from './field-type-service';
+import {z, ZodError} from 'zod';
 
 @Injectable({
   providedIn: 'root'
@@ -31,25 +29,28 @@ export abstract class BaseService {
           first = false;
         }
 
-        url = url.concat(prefix, value, '=', value.toString());
+        url = url.concat(prefix, key, '=', value.toString());
       }
     }
 
     return url;
   }
 
-  protected async trySendRequest<T>(executeRequest: () => Promise<T>, errorLocation: string): Promise<T> {
+  protected static async trySendRequest<T>(executeRequest: () => Promise<T>, errorLocation: string): Promise<T> {
     try {
       return await executeRequest();
     } catch (error) {
       if (error instanceof HttpErrorResponse) {
-        throw new Error(`${errorLocation} Http error: ${error.status} ${error.message}`);
+        throw new Error(`${errorLocation} Http error: ${error.status} ${error}`);
       } else if (error instanceof ZodError) {
-        throw new Error(`${errorLocation} Parsing error: ${error.message}`)
+        throw new Error(`${errorLocation} Parsing error: ${error}`)
+      } else if (error instanceof TypeError) {
+        console.log(error);
+        throw new Error(`${errorLocation} TypeError: ${error}`);
       } else if (error instanceof Error) {
-        throw new Error(`${errorLocation} Unexpected error: ${error.message}`);
+        throw new Error(`${errorLocation} Unexpected error: ${error}`);
       }
-      throw new Error(`${errorLocation} Unknown error.`);
+      throw new Error(`${errorLocation} Unknown error: ${error}`);
     }
   }
 }
@@ -58,3 +59,7 @@ export type QueryParam = [
   key: string,
   value: any
 ];
+
+export const IdTypeZod = z.union([z.string().nonempty(), z.number().nonnegative().gt(0)]);
+
+export type IdType = z.infer<typeof IdTypeZod>;

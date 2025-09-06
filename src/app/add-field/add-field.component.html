@@ -1,5 +1,5 @@
 <mat-card>
-  <mat-card-title>Add Form Field</mat-card-title>
+  <mat-card-title>Add Field</mat-card-title>
   <mat-card-content>
     <form [formGroup]="fieldForm">
       <mat-form-field>
@@ -15,25 +15,20 @@
         <textarea type="text" matInput formControlName="description"></textarea>
       </mat-form-field>
       <div>
-        <mat-checkbox formControlName="isOptional">Is the form optional?</mat-checkbox>
+        <mat-checkbox formControlName="isOptional">Is the field optional?</mat-checkbox>
         @if(fieldForm.get('isOptional')?.hasError('required'))
         {
           <mat-error>It is required to know if the field should be optional</mat-error>
         }
       </div>
-      <mat-form-field>
-        <mat-label>Type</mat-label>
-        <mat-select formControlName="type">
-          @for(type of this.fieldTypes(); track type)
-          {
-            <mat-option [value]="type">{{type}}</mat-option>
-          }
-        </mat-select>
-        @if(fieldForm.get('type')?.hasError('required'))
+      <mat-divider/>
+      <div>
+        <app-item-selection-list [possibleItems]="this.fieldTypes()" [(selectionItem)]="this.selectedFieldType" [itemName]="'Field Type'"/>
+        @if(this.selectedFieldType() === undefined)
         {
           <mat-error>The field type is required</mat-error>
         }
-      </mat-form-field>
+      </div>
     </form>
   </mat-card-content>
   <mat-card-actions>

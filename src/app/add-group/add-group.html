@@ -1,0 +1,31 @@
+<mat-card>
+  <mat-card-title>Add Group</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="groupForm">
+      <div>
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input type="text" matInput formControlName="name">
+          @if (groupForm.get('name')?.hasError('required')) {
+            <mat-error>Name is required</mat-error>
+          }
+        </mat-form-field>
+      </div>
+      <mat-divider/>
+      <div>
+        <app-item-selection-list [possibleItems]="this.possibleGroups()" [(selectionItem)]="this.selectedParent" [itemName]="'Parent Group'"/>
+      </div>
+      <mat-divider/>
+      <div>
+        <app-item-selection-list [possibleItems]="this.possibleGroups()" [(selectionItem)]="this.selectedSubgroups" [itemName]="'Subgroups'"/>
+      </div>
+      <mat-divider/>
+      <div>
+        <app-item-selection-list [possibleItems]="this.possibleForms()" [(selectionItem)]="this.selectedForms" [itemName]="'Forms'"/>
+      </div>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <button matButton="filled" (click)="onSubmit()" [disabled]="!isValid()">Submit</button>
+  </mat-card-actions>
+</mat-card>

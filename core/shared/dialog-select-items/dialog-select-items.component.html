@@ -1,7 +1,7 @@
-<h1 mat-dialog-title>Select items</h1>
+<h1 mat-dialog-title>Select {{this.itemName()}}</h1>
 <mat-dialog-content>
   @if(this.possibleItems().length === 0){
-    <span>No items :(</span>
+    <span>No {{this.itemName()}} available :(</span>
   }
   @else{
     <mat-selection-list [multiple]="true" [(ngModel)]="selectedItems" [compareWith]="compareItems">
@@ -12,5 +12,5 @@
   }
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button matButton="filled" [mat-dialog-close]="selectedItems()" cdkFocusInitial>Ok</button>
+  <button matButton="filled" [mat-dialog-close]="selectedItems()">Ok</button>
 </mat-dialog-actions>

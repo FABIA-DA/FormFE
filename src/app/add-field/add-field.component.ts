@@ -7,11 +7,13 @@ import {MatOption, MatSelect} from '@angular/material/select';
 import {MatButton} from '@angular/material/button';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {SnackbarService} from '../../../core/service/snackbar-service';
-import {DataFormField} from '../../../core/module';
-import {FormService} from '../../../core/service/form-service';
+import {FieldService} from '../../../core/service/field-service';
+import {FieldType, FieldTypeService} from '../../../core/service/field-type-service';
+import {ItemSelectionList} from '../../../core/shared/item-selection-list/item-selection-list.component';
+import {MatDivider} from '@angular/material/divider';
 
 @Component({
-  selector: 'app-add-form-field',
+  selector: 'app-add-field',
   imports: [
     MatCard,
     MatCardTitle,
@@ -22,33 +24,35 @@ import {FormService} from '../../../core/service/form-service';
     MatInputModule,
     MatError,
     MatCheckbox,
-    MatSelect,
-    MatOption,
     MatCardActions,
     MatButton,
+    ItemSelectionList,
+    MatDivider,
   ],
-  templateUrl: './add-form-field.html',
-  styleUrl: './add-form-field.scss'
+  templateUrl: './add-field.component.html',
+  styleUrl: './add-field.component.scss',
+  standalone: true
 })
-export class AddFormField implements OnInit {
+export class AddField implements OnInit {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly fieldForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
     description: [''],
-    isOptional: [false, Validators.required],
-    type: ['', Validators.required]
+    isOptional: [false, Validators.required]
   });
   protected readonly isValid: Signal<boolean> = computed(() => {
     this.valueChanged();
-    return this.fieldForm.valid;
+    return this.fieldForm.valid && this.selectedFieldType() !== undefined;
   });
-  protected readonly fieldTypes: WritableSignal<string[]> = signal([]);
+  protected readonly fieldTypes: WritableSignal<FieldType[]> = signal([]);
+  protected readonly selectedFieldType: WritableSignal<FieldType | undefined> = signal(undefined);
   private readonly valueChanged: Signal<any> = toSignal(this.fieldForm.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
-  private readonly service: FormService = inject(FormService);
+  private readonly fieldService: FieldService = inject(FieldService);
+  private readonly fieldTypeService: FieldTypeService = inject(FieldTypeService);
 
   public async ngOnInit(): Promise<void> {
-    this.fieldTypes.set(await this.service.getDataFieldTypes());
+    this.fieldTypes.set(await this.fieldTypeService.getAllFieldTypesAsync());
   }
 
   protected async onSubmit(): Promise<void>
@@ -61,28 +65,24 @@ export class AddFormField implements OnInit {
     const name: string | null = this.fieldForm.get('name')?.value;
     const description: string | null = this.fieldForm.get('description')?.value;
     const isOptional: boolean | null = this.fieldForm.get('isOptional')?.value;
-    const type: string | null = this.fieldForm.get('type')?.value;
+    const type: FieldType | undefined = this.selectedFieldType();
 
     if (!name
     || !description
-    || !isOptional
+    || isOptional === null
     || !type){
       this.snackbar.show('Some form fields are still invalid...');
       return;
     }
 
-    const formField: DataFormField = {
-      id: 0,
-      name: name,
-      description: description,
-      isOptional: isOptional,
-      type: type
-    };
-
-    await this.service.sendDataField(formField);
-
+    await this.fieldService.createFieldAsync(type.id, name, description, isOptional);
     this.snackbar.show('Form field was submitted successfully.');
-    this.fieldForm.reset();
+    this.reset();
     return;
+  }
+
+  private reset(){
+    this.selectedFieldType.set(undefined);
+    this.fieldForm.reset();
   }
 }

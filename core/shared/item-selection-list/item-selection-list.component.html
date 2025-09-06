@@ -1,14 +1,24 @@
 <div>
-  <mat-divider></mat-divider>
   <div class="option-edit-container">
     <ng-content/>
-    <button matButton="elevated" (click)="updateItems()">Edit</button>
+    <button matButton="elevated" (click)="select()">Select {{this.itemName()}}</button>
   </div>
   <div class="fields-container">
-    @for (item of this.items(); track item; let itemIdx = $index) {
+    @let selectionItem = this.selectionItem();
+    @if(Array.isArray(selectionItem)){
+      @for (item of selectionItem; track item; let itemIdx = $index) {
+        <div class="field-wrapper">
+          <app-item-presentation [item]="item"/>
+          <button matIconButton (click)="deleteItem(itemIdx)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
+    }
+    @else if(selectionItem !== undefined) {
       <div class="field-wrapper">
-        <app-item-presentation [item]="item"/>
-        <button matIconButton (click)="deleteItem(itemIdx)">
+        <app-item-presentation [item]="selectionItem"/>
+        <button matIconButton (click)="deleteItem(undefined)">
           <mat-icon>delete</mat-icon>
         </button>
       </div>

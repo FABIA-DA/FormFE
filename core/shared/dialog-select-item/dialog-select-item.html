@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Select {{this.itemName()}}</h1>
+<mat-dialog-content>
+  @if(this.possibleItems().length === 0){
+    <span>No {{this.itemName()}}s available :(</span>
+  }
+  @else{
+    <mat-selection-list [multiple]="false" [(ngModel)]="this.selectedItem">
+      @for(item of this.possibleItems(); track item){
+        <mat-list-option [value]="item" [selected]="">{{item.name}}</mat-list-option>
+      }
+    </mat-selection-list>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button matButton="filled" [mat-dialog-close]="this.selectedItem()?.length === 1 ? this.selectedItem()!.at(0) : undefined">Ok</button>
+</mat-dialog-actions>

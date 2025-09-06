@@ -1,4 +1,4 @@
-import {BaseService} from './base-service';
+import {BaseService, IdType, IdTypeZod} from './base-service';
 import {z} from 'zod';
 import {FieldZod} from './field-service';
 import {Injectable} from '@angular/core';
@@ -14,7 +14,7 @@ export class SingleChoiceFieldService extends BaseService {
   }
 
   public async getAllSingleChoiceFieldsAsync(): Promise<SingleChoiceField[]> {
-    return await this.trySendRequest(async (): Promise<SingleChoiceField[]> => {
+    return await BaseService.trySendRequest(async (): Promise<SingleChoiceField[]> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: SingleChoiceFieldListResponse = SingleChoiceFieldListResponseZod.parse(response.body);
@@ -23,8 +23,8 @@ export class SingleChoiceFieldService extends BaseService {
     }, 'Error while trying to get all single choice fields.');
   }
 
-  public async getSingleChoiceFieldByIdAsync(id: string | number): Promise<SingleChoiceField> {
-    return await this.trySendRequest(async (): Promise<SingleChoiceField> => {
+  public async getSingleChoiceFieldByIdAsync(id: IdType): Promise<SingleChoiceField> {
+    return await BaseService.trySendRequest(async (): Promise<SingleChoiceField> => {
       const url: string = this.buildUrl(id.toString());
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: SingleChoiceField = SingleChoiceFieldZod.parse(response.body);
@@ -35,9 +35,9 @@ export class SingleChoiceFieldService extends BaseService {
 
   public async createSingleChoiceFieldAsync(name: string, options: {
     name: string,
-    fieldIds: (string | number)[]
+    fieldIds: (IdType)[]
   }[]): Promise<SingleChoiceField> {
-    return await this.trySendRequest(async (): Promise<SingleChoiceField> => {
+    return await BaseService.trySendRequest(async (): Promise<SingleChoiceField> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.post(url, {
         name: name,
@@ -49,12 +49,12 @@ export class SingleChoiceFieldService extends BaseService {
     }, 'Error while trying to create single choice field.');
   }
 
-  public async updateSingleChoiceFieldByIdAsync(id: string | number, name: string, oldOptions: {
-    id: string | number,
+  public async updateSingleChoiceFieldByIdAsync(id: IdType, name: string, oldOptions: {
+    id: IdType,
     name: string,
-    fieldIds: (string | number)[]
-  }[], newOptions: { name: string, fieldIds: (string | number)[] }[]): Promise<void> {
-    return await this.trySendRequest(async (): Promise<void> => {
+    fieldIds: (IdType)[]
+  }[], newOptions: { name: string, fieldIds: (IdType)[] }[]): Promise<void> {
+    return await BaseService.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.put(url, {
         name: name,
@@ -64,8 +64,8 @@ export class SingleChoiceFieldService extends BaseService {
     }, `Error while trying to update single choice field with id ${id}.`);
   }
 
-  public async deleteSingleChoiceFieldByIdAsync(id: string | number): Promise<void> {
-    return await this.trySendRequest(async (): Promise<void> => {
+  public async deleteSingleChoiceFieldByIdAsync(id: IdType): Promise<void> {
+    return await BaseService.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.delete(url, {observe: 'response'}));
     }, `Error while trying to delete single choice field with id ${id}.`);
@@ -73,9 +73,9 @@ export class SingleChoiceFieldService extends BaseService {
 
 }
 
-const OptionZod = z.object({
-  id: z.union([z.string().nonempty(), z.number().nonnegative().gt(0)]),
-  singleChoiceFieldId: z.union([z.string().nonempty(), z.number().nonnegative().gt(0)]),
+export const OptionZod = z.object({
+  id: IdTypeZod,
+  singleChoiceFieldId: IdTypeZod,
   name: z.string().nonempty(),
   fields: z.array(FieldZod)
 });
@@ -83,7 +83,7 @@ const OptionZod = z.object({
 export type Option = z.infer<typeof OptionZod>;
 
 export const SingleChoiceFieldZod = z.object({
-  id: z.union([z.string().nonempty(), z.number().nonnegative().gt(0)]),
+  id: IdTypeZod,
   name: z.string().nonempty(),
   options: z.array(OptionZod)
 });

@@ -1,0 +1,23 @@
+<mat-card>
+  <mat-card-title>Add Field Group</mat-card-title>
+  <mat-card-content>
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput [formControl]="name">
+      @if (this.name.hasError('required')) {
+        <mat-error>Name is required</mat-error>
+      }
+    </mat-form-field>
+    <mat-divider/>
+    <div>
+      <app-item-selection-list [possibleItems]="possibleSingleChoiceFields()" [(selectionItem)]="selectedSingleChoiceFields" [itemName]="'Single Choice Fields'"/>
+    </div>
+    <mat-divider/>
+    <div>
+      <app-item-selection-list [possibleItems]="this.possibleFields()" [(selectionItem)]="this.selectedFields" [itemName]="'Fields'"/>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button matButton="filled" (click)="submitFormGroup()" [disabled]="!this.isValid()">Submit</button>
+  </mat-card-actions>
+</mat-card>

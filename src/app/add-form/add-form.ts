@@ -4,10 +4,13 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {MatButton} from '@angular/material/button';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {SnackbarService} from '../../../core/service/snackbar-service';
-import {FieldGroup, Form} from '../../../core/module';
 import {FormService} from '../../../core/service/form-service';
 import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {ItemSelectionList} from '../../../core/shared/item-selection-list/item-selection-list.component';
+import {FieldGroup, FieldGroupService} from '../../../core/service/field-group-service';
+import {IdType} from '../../../core/service/base-service';
+import {Group} from '../../../core/service/group-service';
+import {MatDivider} from '@angular/material/divider';
 
 @Component({
   selector: 'app-add-form',
@@ -19,29 +22,33 @@ import {ItemSelectionList} from '../../../core/shared/item-selection-list/item-s
     MatInput,
     MatError,
     MatLabel,
-    ItemSelectionList
+    ItemSelectionList,
+    MatDivider
   ],
   templateUrl: './add-form.html',
-  styleUrl: './add-form.scss'
+  styleUrl: './add-form.scss',
+  standalone: true
 })
 export class AddForm implements OnInit {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly formForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
-    info: ['']
   });
   protected readonly isValid: Signal<boolean> = computed(() => {
     this.change();
     return this.formForm.valid;
   });
+  protected readonly possibleGroups: WritableSignal<Group[]> = signal([]);
+  protected readonly selectedGroup: WritableSignal<Group | undefined> = signal(undefined);
   protected readonly selectedFieldGroups: WritableSignal<FieldGroup[]> = signal([]);
   protected readonly possibleFieldGroups: WritableSignal<FieldGroup[]> = signal([]);
   private readonly change: Signal<any> = toSignal(this.formForm.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
-  private readonly service: FormService = inject(FormService);
+  private readonly formService: FormService = inject(FormService);
+  private readonly fieldGroupService: FieldGroupService = inject(FieldGroupService);
 
   public async ngOnInit(): Promise<void> {
-    this.possibleFieldGroups.set(await this.service.getFieldGroups());
+    this.possibleFieldGroups.set(await this.fieldGroupService.getAllFieldGroupsAsync());
   }
 
   protected async submitForm(): Promise<void>{
@@ -50,24 +57,17 @@ export class AddForm implements OnInit {
     }
 
     const name: string | undefined = this.formForm.get('name')?.value;
-    const info: string | undefined = this.formForm.get('info')?.value;
 
-    if(!name
-    || !info){
+    if(!name){
       this.snackbar.show('The form is still invalid');
       return;
     }
 
-    const groups: FieldGroup[] = this.selectedFieldGroups();
+    const groupId: IdType | null = null;
+    const fieldGroupIds: IdType[] = this.selectedFieldGroups().map(g => g.id);
 
-    const data: Form = {
-      id: 0,
-      name: name,
-      info: info,
-      groups: groups
-    };
 
-    await this.service.sendForm(data);
+    await this.formService.createFormAsync(name, groupId, fieldGroupIds);
     this.snackbar.show('The form was submitted successfully');
     this.resetForm();
   }
