@@ -3,18 +3,21 @@
 }
 @else {
   <mat-card>
-    <mat-card-title>Add Single Choice Field</mat-card-title>
+    <mat-card-title>{{this.isUpdate() ? 'Update' : 'Add'}} Single Choice Field</mat-card-title>
     <mat-card-content>
-      <form [formGroup]="oneOfFieldForm">
+      <form [formGroup]="singleChoiceFieldForm">
         <mat-form-field>
           <mat-label>Name</mat-label>
           <input type="text" matInput formControlName="name">
-          @if (oneOfFieldForm.get('name')?.hasError('required')) {
+          @if (singleChoiceFieldForm.get('name')?.hasError('required')) {
             <mat-error>The name is required</mat-error>
           }
         </mat-form-field>
         <div formArrayName="options">
-          @for (option of options.controls; track $index; let idx = $index) {
+          @for (option of options.controls; track option; let idx = $index) {
+            @if(idx > 0){
+              <mat-divider/>
+            }
             <app-item-selection-list [possibleItems]="this.possibleFields()" [(selectionItem)]="this.fields[idx]" [itemName]="'Fields'">
               <mat-form-field>
                 <mat-label>{{ idx + 1 }}.Option</mat-label>

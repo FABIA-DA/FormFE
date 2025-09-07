@@ -1,0 +1,17 @@
+@let singleChoiceField = this.singleChoiceField();
+@if(this.loading()){
+  <mat-progress-bar mode="indeterminate"/>
+}
+@else if(singleChoiceField !== undefined){
+  <div class="header-wrapper">
+    <h1>{{singleChoiceField.name}}</h1>
+    <div>
+      <button matFab aria-label="Button to edit this single choice field" [routerLink]="['edit-single-choice-field', singleChoiceField.id]">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button matFab aria-label="Button to delete this single choice field" (click)="delete()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+}

@@ -3,7 +3,7 @@
 }
 @else {
   <mat-card>
-    <mat-card-title>Add Field Group</mat-card-title>
+    <mat-card-title>{{this.isUpdate() ? 'Update' : 'Add'}} Field Group</mat-card-title>
     <mat-card-content>
       <mat-form-field>
         <mat-label>Name</mat-label>
@@ -12,7 +12,6 @@
           <mat-error>Name is required</mat-error>
         }
       </mat-form-field>
-      <mat-divider/>
       <div>
         <app-item-selection-list [possibleItems]="possibleSingleChoiceFields()" [(selectionItem)]="selectedSingleChoiceFields" [itemName]="'Single Choice Fields'"/>
       </div>

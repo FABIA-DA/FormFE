@@ -1,4 +1,4 @@
-import {Component, computed, inject, OnInit, signal, Signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, OnDestroy, OnInit, signal, Signal, WritableSignal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {Group, GroupService, GroupZod, MinimalGroupZod} from '../../../core/service/group-service';
@@ -18,6 +18,8 @@ import {FieldZod} from '../../../core/service/field-service';
 import {OptionZod, SingleChoiceFieldZod} from '../../../core/service/single-choice-field-service';
 import {FieldTypeZod} from '../../../core/service/field-type-service';
 import {MatProgressBar} from '@angular/material/progress-bar';
+import {ActivatedRoute} from '@angular/router';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-edit-group',
@@ -26,7 +28,7 @@ import {MatProgressBar} from '@angular/material/progress-bar';
   styleUrl: './edit-group.component.scss',
   standalone: true
 })
-export class EditGroup implements OnInit {
+export class EditGroup implements OnInit, OnDestroy {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly groupForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required]
@@ -41,40 +43,41 @@ export class EditGroup implements OnInit {
   protected readonly possibleForms: WritableSignal<Form[]> = signal([]);
   protected readonly selectedForms: WritableSignal<Form[]> = signal([]);
   protected readonly processing: WritableSignal<boolean> = signal(false);
+  private readonly group: WritableSignal<Group | undefined> = signal(undefined);
+  protected readonly isUpdate: Signal<boolean> = computed(() => {
+    return this.group() !== undefined;
+  });
   private readonly valueChanged: Signal<any> = toSignal(this.groupForm.valueChanges);
   private readonly groupService: GroupService = inject(GroupService);
   private readonly formService: FormService = inject(FormService);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
-  private readonly dialog: MatDialog = inject(MatDialog);
+  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly subscriptions: Subscription[] = [];
 
-  async ngOnInit(): Promise<void> {
-    console.log('GroupZod', GroupZod);
-    console.log('MinimalGroupZod', MinimalGroupZod);
-    console.log('IdTypeZod', IdTypeZod);
-    console.log('MinimalFormZod', MinimalFormZod);
-    console.log('FormZod', FormZod);
-    console.log('FieldGroupZod', FieldGroupZod);
-    console.log('FieldZod', FieldZod);
-    console.log('SingleChoiceFieldZod', SingleChoiceFieldZod);
-    console.log('OptionZod', OptionZod);
-    console.log('FieldTypeZod', FieldTypeZod);
+  public async ngOnInit(): Promise<void> {
     this.possibleGroups.set(await this.groupService.getAllGroupsAsync());
     this.possibleForms.set(await this.formService.getAllFormsAsync());
+    this.subscriptions.push(this.activatedRoute.params.subscribe(async params => {
+      const id: IdType | undefined = params['id'];
+      if(id === undefined){
+        this.group.set(undefined);
+        return;
+      }
+
+      this.processing.set(true);
+      try{
+        this.group.set(await this.groupService.getGroupByIdAsync(id));
+      }
+      finally{
+        this.processing.set(false);
+      }
+    }));
   }
 
-  protected openParentDialog(): void {
-    const data: DialogItemData<Group> = {
-      possibleItems: this.possibleGroups(),
-      itemName: 'Group'
-    };
-
-    const dialogRef = this.dialog.open(DialogSelectItem<Group>, {
-      data: data
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.selectedParent.set(result);
-    });
+  public ngOnDestroy(): void {
+    for(const subscription of this.subscriptions) {
+      subscription.unsubscribe();
+    }
   }
 
   protected async onSubmit(): Promise<void> {
@@ -85,6 +88,7 @@ export class EditGroup implements OnInit {
 
     const name: string | null = this.groupForm.get('name')?.value;
     const parentGroup: Group | undefined = this.selectedParent();
+    const parentGroupId: IdType | null = parentGroup?.id === undefined ? null : parentGroup!.id;
     const subgroups: Group[] = this.selectedSubgroups();
     const forms: Form[] = this.selectedForms();
 
@@ -98,9 +102,14 @@ export class EditGroup implements OnInit {
 
     this.processing.set(true);
     try{
-      await this.groupService.createGroupAsync(name, parentGroup?.id === undefined ? null : parentGroup?.id, subgroupIds, formIds);
+      if(!this.isUpdate()){
+        await this.groupService.createGroupAsync(name, parentGroupId, subgroupIds, formIds);
+        this.reset();
+      }
+      else {
+        await this.groupService.updateGroupAsync(this.group()!.id, name, parentGroupId, subgroupIds, formIds);
+      }
       this.snackbar.show('The group was submitted successfully');
-      this.reset();
     }
     finally{
       this.processing.set(false);

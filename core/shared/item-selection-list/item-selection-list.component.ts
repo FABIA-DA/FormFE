@@ -27,6 +27,7 @@ export class ItemSelectionList<T extends { id: IdType, name: string }> {
   public readonly possibleItems: InputSignal<T[]> = input.required();
   public readonly selectionItem: ModelSignal<T[] | T | undefined> = model.required();
   public readonly itemName: InputSignal<string> = input.required();
+  public readonly selectionDirty: ModelSignal<boolean> = model(false);
   private readonly dialog: MatDialog = inject(MatDialog);
 
   protected select(): void {
@@ -55,6 +56,7 @@ export class ItemSelectionList<T extends { id: IdType, name: string }> {
     });
 
     dialogRef.afterClosed().subscribe((result: T[] | T | undefined) => {
+      this.selectionDirty.set(true);
       if(!result) {
         return;
       }
@@ -66,10 +68,10 @@ export class ItemSelectionList<T extends { id: IdType, name: string }> {
   protected deleteItem(idx: number | undefined): void {
     let current: T[] | T | undefined = this.selectionItem();
 
-    if(current === undefined || idx === undefined){
+    if(current === undefined){
       return;
     }
-    else if(Array.isArray(current)){
+    else if(Array.isArray(current) && idx !== undefined){
       current.splice(idx, 1);
       this.selectionItem.set(current);
     }

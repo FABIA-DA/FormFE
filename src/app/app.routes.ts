@@ -12,6 +12,12 @@ import {ListSingleChoiceFields} from './list-single-choice-fields/list-single-ch
 import {ListFieldGroups} from './list-field-groups/list-field-groups';
 import {ListForms} from './list-forms/list-forms';
 import {ListGroups} from './list-groups/list-groups';
+import {FieldTypeDetails} from './field-type-details/field-type-details';
+import {FieldDetails} from './field-details/field-details';
+import {SingleChoiceFieldDetails} from './single-choice-field-details/single-choice-field-details';
+import {FieldGroupDetails} from './field-group-details/field-group-details';
+import {FormDetails} from './form-details/form-details';
+import {GroupDetails} from './group-details/group-details';
 
 export const routes: Routes = [
   {path: 'home', component: Home},
@@ -33,5 +39,11 @@ export const routes: Routes = [
   {path: 'edit-field-group/:id', component: EditFieldGroup},
   {path: 'edit-form/:id', component: EditForm},
   {path: 'edit-group/:id', component: EditGroup},
+  {path: 'field-type-details/:id', component: FieldTypeDetails},
+  {path: 'field-details/:id', component: FieldDetails},
+  {path: 'single-choice-field-details/:id', component: SingleChoiceFieldDetails},
+  {path: 'field-group-details/:id', component: FieldGroupDetails},
+  {path: 'form-details/:id', component: FormDetails},
+  {path: 'group-details/:id', component: GroupDetails},
   {path: '**', redirectTo: 'home'}
 ];

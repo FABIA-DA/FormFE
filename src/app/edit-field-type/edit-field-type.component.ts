@@ -21,9 +21,9 @@ import {IdType} from '../../../core/service/base-service';
 })
 export class EditFieldType implements OnInit, OnDestroy{
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
-  protected readonly fieldType: WritableSignal<FieldType | undefined> = signal(undefined);
-  protected readonly update: Signal<boolean> = computed(() => {
-    return this.fieldType !== undefined;
+  private readonly fieldType: WritableSignal<FieldType | undefined> = signal(undefined);
+  protected readonly isUpdate: Signal<boolean> = computed(() => {
+    return this.fieldType() !== undefined;
   });
   protected readonly fieldTypeForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
@@ -41,9 +41,13 @@ export class EditFieldType implements OnInit, OnDestroy{
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private readonly subscriptions: Subscription[] = [];
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.subscriptions.push(this.activatedRoute.params.subscribe(async params => {
-      const id: IdType = params['id'] as IdType;
+      const id: IdType | undefined = params['id'];
+      if(id === undefined){
+        this.fieldType.set(undefined);
+        return;
+      }
       this.processing.set(true);
       try{
         this.fieldType.set(await this.fieldTypeService.getFieldTypeByIdAsync(id));
@@ -55,7 +59,7 @@ export class EditFieldType implements OnInit, OnDestroy{
     }));
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     for(const subscription of this.subscriptions){
       subscription.unsubscribe();
     }
@@ -87,7 +91,7 @@ export class EditFieldType implements OnInit, OnDestroy{
 
     this.processing.set(true);
     try{
-      if(!this.update()){
+      if(!this.isUpdate()){
         await this.fieldTypeService.createFieldTypeAsync(name, description, regex);
         this.fieldTypeForm.reset();
       }

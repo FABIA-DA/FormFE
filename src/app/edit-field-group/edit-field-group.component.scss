@@ -2,3 +2,20 @@ mat-card {
   width: 50%;
   padding: 1rem;
 }
+
+mat-card > *, mat-card-content > * {
+  margin: 1rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-divider {
+  margin: 1rem 0 1rem 0;
+}
+
+mat-form-field {
+  width: 100%;
+}

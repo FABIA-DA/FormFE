@@ -7,11 +7,14 @@ import {MatOption, MatSelect} from '@angular/material/select';
 import {MatButton} from '@angular/material/button';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {SnackbarService} from '../../../core/service/snackbar-service';
-import {FieldService} from '../../../core/service/field-service';
+import {Field, FieldService} from '../../../core/service/field-service';
 import {FieldType, FieldTypeService} from '../../../core/service/field-type-service';
 import {ItemSelectionList} from '../../../core/shared/item-selection-list/item-selection-list.component';
 import {MatDivider} from '@angular/material/divider';
 import {MatProgressBar} from '@angular/material/progress-bar';
+import {ActivatedRoute} from '@angular/router';
+import {Subscription} from 'rxjs';
+import {IdType} from '../../../core/service/base-service';
 
 @Component({
   selector: 'app-edit-field',
@@ -48,14 +51,49 @@ export class EditField implements OnInit {
   });
   protected readonly fieldTypes: WritableSignal<FieldType[]> = signal([]);
   protected readonly selectedFieldType: WritableSignal<FieldType | undefined> = signal(undefined);
+  protected readonly fieldTypeRequired: boolean = true;
+  protected readonly fieldTypeDirty: WritableSignal<boolean> = signal(false);
   protected readonly processing: WritableSignal<boolean> = signal(false);
+  private readonly field: WritableSignal<Field | undefined> = signal(undefined);
+  protected readonly isUpdate: Signal<boolean> = computed(() => {
+    return this.field() !== undefined;
+  });
   private readonly valueChanged: Signal<any> = toSignal(this.fieldForm.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
   private readonly fieldService: FieldService = inject(FieldService);
   private readonly fieldTypeService: FieldTypeService = inject(FieldTypeService);
+  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly subscriptions: Subscription[] = [];
 
   public async ngOnInit(): Promise<void> {
+    this.subscriptions.push(this.activatedRoute.params.subscribe(async params => {
+      const id: IdType | undefined = params['id'];
+      if(id === undefined){
+        this.field.set(undefined);
+        return;
+      }
+      this.processing.set(true);
+      try{
+        this.field.set(await this.fieldService.getFieldByIdAsync(id));
+        this.setFormValues();
+      }
+      finally{
+        this.processing.set(false);
+      }
+    }));
     this.fieldTypes.set(await this.fieldTypeService.getAllFieldTypesAsync());
+  }
+
+  public ngOnDestroy(): void {
+    for(const subscription of this.subscriptions){
+      subscription.unsubscribe();
+    }
+  }
+
+  private setFormValues(): void {
+    this.fieldForm.get('name')?.setValue(this.field()?.name);
+    this.fieldForm.get('description')?.setValue(this.field()?.description);
+    this.fieldForm.get('isOptional')?.setValue(this.field()?.isOptional);
   }
 
   protected async onSubmit(): Promise<void>
@@ -80,9 +118,14 @@ export class EditField implements OnInit {
 
     this.processing.set(true);
     try{
-      await this.fieldService.createFieldAsync(type.id, name, description, isOptional);
+      if(!this.isUpdate()){
+        await this.fieldService.createFieldAsync(type.id, name, description, isOptional);
+        this.reset();
+      }
+      else {
+        await this.fieldService.updateFieldAsync(this.field()!.id, type.id, name, description, isOptional);
+      }
       this.snackbar.show('Form field was submitted successfully.');
-      this.reset();
     }
     finally{
       this.processing.set(false);

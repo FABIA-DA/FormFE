@@ -3,12 +3,11 @@ mat-card {
   padding: 1rem;
 }
 
-.form-field-container {
-  display: flex;
-  flex-direction: column;
-  width: 50%;
+mat-card > *, form > * {
+  margin: 1rem;
 }
 
-.form-field-container > * {
-  margin: 1rem;
+form {
+  display: flex;
+  flex-direction: column;
 }
