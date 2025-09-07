@@ -14,7 +14,7 @@ export class SingleChoiceFieldService extends BaseService {
   }
 
   public async getAllSingleChoiceFieldsAsync(): Promise<SingleChoiceField[]> {
-    return await BaseService.trySendRequest(async (): Promise<SingleChoiceField[]> => {
+    return await this.trySendRequest(async (): Promise<SingleChoiceField[]> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: SingleChoiceFieldListResponse = SingleChoiceFieldListResponseZod.parse(response.body);
@@ -24,7 +24,7 @@ export class SingleChoiceFieldService extends BaseService {
   }
 
   public async getSingleChoiceFieldByIdAsync(id: IdType): Promise<SingleChoiceField> {
-    return await BaseService.trySendRequest(async (): Promise<SingleChoiceField> => {
+    return await this.trySendRequest(async (): Promise<SingleChoiceField> => {
       const url: string = this.buildUrl(id.toString());
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: SingleChoiceField = SingleChoiceFieldZod.parse(response.body);
@@ -37,7 +37,7 @@ export class SingleChoiceFieldService extends BaseService {
     name: string,
     fieldIds: (IdType)[]
   }[]): Promise<SingleChoiceField> {
-    return await BaseService.trySendRequest(async (): Promise<SingleChoiceField> => {
+    return await this.trySendRequest(async (): Promise<SingleChoiceField> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.post(url, {
         name: name,
@@ -54,7 +54,7 @@ export class SingleChoiceFieldService extends BaseService {
     name: string,
     fieldIds: (IdType)[]
   }[], newOptions: { name: string, fieldIds: (IdType)[] }[]): Promise<void> {
-    return await BaseService.trySendRequest(async (): Promise<void> => {
+    return await this.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.put(url, {
         name: name,
@@ -65,7 +65,7 @@ export class SingleChoiceFieldService extends BaseService {
   }
 
   public async deleteSingleChoiceFieldByIdAsync(id: IdType): Promise<void> {
-    return await BaseService.trySendRequest(async (): Promise<void> => {
+    return await this.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.delete(url, {observe: 'response'}));
     }, `Error while trying to delete single choice field with id ${id}.`);

@@ -13,7 +13,7 @@ export class GroupService extends BaseService {
   }
 
   public async getAllGroupsAsync(): Promise<Group[]> {
-    return await BaseService.trySendRequest(async (): Promise<Group[]> => {
+    return await this.trySendRequest(async (): Promise<Group[]> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: GroupListResponse = GroupListResponseZod.parse(response.body);
@@ -23,7 +23,7 @@ export class GroupService extends BaseService {
   }
 
   public async getGroupByIdAsync(id: IdType): Promise<Group> {
-    return await BaseService.trySendRequest(async (): Promise<Group> => {
+    return await this.trySendRequest(async (): Promise<Group> => {
       const url: string = this.buildUrl(id.toString());
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: Group = GroupZod.parse(response.body);
@@ -33,7 +33,7 @@ export class GroupService extends BaseService {
   }
 
   public async createGroupAsync(name: string, parentId: IdType | null, subgroupIds: IdType[], formIds: IdType[]): Promise<Group> {
-    return await BaseService.trySendRequest(async (): Promise<Group> => {
+    return await this.trySendRequest(async (): Promise<Group> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.post(url, {
         name: name,
@@ -48,7 +48,7 @@ export class GroupService extends BaseService {
   }
 
   public async updateGroupAsync(id: IdType, name: string, parentId: IdType | null, subgroupIds: IdType[], formIds: IdType[]): Promise<void> {
-    return await BaseService.trySendRequest(async (): Promise<void> => {
+    return await this.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.put(url, {
         name: name,
@@ -60,7 +60,7 @@ export class GroupService extends BaseService {
   }
 
   public async deleteGroupAsync(id: IdType): Promise<void> {
-    return await BaseService.trySendRequest(async (): Promise<void> => {
+    return await this.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.delete(url, {observe: 'response'}));
     }, `Error while trying to delete group with id ${id}.`);

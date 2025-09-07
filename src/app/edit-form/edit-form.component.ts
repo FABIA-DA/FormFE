@@ -14,7 +14,7 @@ import {MatDivider} from '@angular/material/divider';
 import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
-  selector: 'app-add-form',
+  selector: 'app-edit-form',
   imports: [
     MatCardModule,
     ReactiveFormsModule,
@@ -27,11 +27,11 @@ import {MatProgressBar} from '@angular/material/progress-bar';
     MatDivider,
     MatProgressBar
   ],
-  templateUrl: './add-form.html',
-  styleUrl: './add-form.scss',
+  templateUrl: './edit-form.component.html',
+  styleUrl: './edit-form.component.scss',
   standalone: true
 })
-export class AddForm implements OnInit {
+export class EditForm implements OnInit {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly formForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],

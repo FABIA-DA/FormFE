@@ -8,7 +8,6 @@ import {
   MatRow, MatRowDef,
   MatTable
 } from '@angular/material/table';
-import {MatTabLabel} from '@angular/material/tabs';
 import {Group, GroupService} from '../../../core/service/group-service';
 
 @Component({
@@ -17,7 +16,6 @@ import {Group, GroupService} from '../../../core/service/group-service';
     MatTable,
     MatColumnDef,
     MatHeaderRow,
-    MatTabLabel,
     MatHeaderCellDef,
     MatCellDef,
     MatCell,
@@ -32,9 +30,16 @@ import {Group, GroupService} from '../../../core/service/group-service';
 export class ListGroups implements OnInit {
   protected readonly displayedColumns: string[] = ['name', 'parentName', 'subgroupCount', 'formCount'];
   protected readonly dataSource: WritableSignal<Group[]> = signal([]);
+  protected readonly loading: WritableSignal<boolean> = signal(false);
   private readonly groupService: GroupService = inject(GroupService);
 
   async ngOnInit(): Promise<void> {
-    this.dataSource.set(await this.groupService.getAllGroupsAsync());
+    this.loading.set(true);
+    try{
+      this.dataSource.set(await this.groupService.getAllGroupsAsync());
+    }
+    finally{
+      this.loading.set(false);
+    }
   }
 }

@@ -14,7 +14,7 @@ export class FormService extends BaseService {
   }
 
   public async getAllFormsAsync(): Promise<Form[]> {
-    return await BaseService.trySendRequest(async (): Promise<Form[]> => {
+    return await this.trySendRequest(async (): Promise<Form[]> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: FormListResponse = FormListResponseZod.parse(response.body);
@@ -24,7 +24,7 @@ export class FormService extends BaseService {
   }
 
   public async getFormByIdAsync(id: IdType): Promise<Form> {
-    return await BaseService.trySendRequest(async (): Promise<Form> => {
+    return await this.trySendRequest(async (): Promise<Form> => {
       const url: string = this.buildUrl(id.toString());
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: Form = FormZod.parse(response.body);
@@ -34,7 +34,7 @@ export class FormService extends BaseService {
   }
 
   public async createFormAsync(name: string, groupId: string | null, fieldGroupIds: (IdType)[]): Promise<Form> {
-    return await BaseService.trySendRequest(async (): Promise<Form> => {
+    return await this.trySendRequest(async (): Promise<Form> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.post(url, {
         name: name,
@@ -48,7 +48,7 @@ export class FormService extends BaseService {
   }
 
   public async updateFormByIdAsync(id: IdType, name: string, groupId: string | null, fieldGroupIds: (IdType)[]): Promise<void> {
-    return await BaseService.trySendRequest(async (): Promise<void> => {
+    return await this.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.put(url, {
         name: name,
@@ -59,7 +59,7 @@ export class FormService extends BaseService {
   }
 
   public async deleteFormByIdAsync(id: IdType): Promise<void> {
-    return await BaseService.trySendRequest(async (): Promise<void> => {
+    return await this.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.delete(url, {observe: 'response'}));
     }, `Error while trying to delete form with id ${id}.`);

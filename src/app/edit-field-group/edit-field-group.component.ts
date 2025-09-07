@@ -17,7 +17,7 @@ import {MatDivider} from '@angular/material/divider';
 import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
-  selector: 'app-add-field-group',
+  selector: 'app-edit-field-group',
   imports: [
     MatCardModule,
     MatFormField,
@@ -30,11 +30,11 @@ import {MatProgressBar} from '@angular/material/progress-bar';
     MatDivider,
     MatProgressBar,
   ],
-  templateUrl: './add-field-group.component.html',
-  styleUrl: './add-field-group.component.scss',
+  templateUrl: './edit-field-group.component.html',
+  styleUrl: './edit-field-group.component.scss',
   standalone: true
 })
-export class AddFieldGroup implements OnInit {
+export class EditFieldGroup implements OnInit {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly name: FormControl = this.formBuilder.control('', Validators.required);
   protected readonly selectedFields: WritableSignal<Field[]> = signal([]);

@@ -13,7 +13,7 @@ export class FieldService extends BaseService {
   }
 
   public async getAllFieldsAsync(): Promise<Field[]> {
-    return await BaseService.trySendRequest(async (): Promise<Field[]> => {
+    return await this.trySendRequest(async (): Promise<Field[]> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: FieldListResponse = FieldListResponseZod.parse(response.body);
@@ -23,7 +23,7 @@ export class FieldService extends BaseService {
   }
 
   public async getFieldByIdAsync(id: IdType): Promise<Field> {
-    return await BaseService.trySendRequest(async (): Promise<Field> => {
+    return await this.trySendRequest(async (): Promise<Field> => {
       const url: string = this.buildUrl(id.toString());
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: Field = FieldZod.parse(response.body);
@@ -33,7 +33,7 @@ export class FieldService extends BaseService {
   }
 
   public async createFieldAsync(fieldTypeId: IdType, name: string, description: string | null, isOptional: boolean): Promise<Field> {
-    return await BaseService.trySendRequest(async (): Promise<Field> => {
+    return await this.trySendRequest(async (): Promise<Field> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.post(url, {
         fieldTypeId: fieldTypeId,
@@ -48,7 +48,7 @@ export class FieldService extends BaseService {
   }
 
   public async updateFieldAsync(id: IdType, fieldTypeId: IdType, name: string, description: string | null, isOptional: boolean): Promise<void> {
-    return await BaseService.trySendRequest(async (): Promise<void> => {
+    return await this.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.put(url, {
         fieldTypeId: fieldTypeId,
@@ -60,7 +60,7 @@ export class FieldService extends BaseService {
   }
 
   public async deleteFieldAsync(id: IdType): Promise<void> {
-    return await BaseService.trySendRequest(async (): Promise<void> => {
+    return await this.trySendRequest(async (): Promise<void> => {
       const url: string = this.buildUrl(id.toString());
       await firstValueFrom(this.http.delete(url, {observe: 'response'}));
     }, `Error while trying to delete field with id ${id}.`);

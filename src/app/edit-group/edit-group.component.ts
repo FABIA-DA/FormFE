@@ -20,13 +20,13 @@ import {FieldTypeZod} from '../../../core/service/field-type-service';
 import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
-  selector: 'app-add-group',
+  selector: 'app-edit-group',
   imports: [MatCardModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton, ItemSelectionList, MatDivider, MatProgressBar],
-  templateUrl: './add-group.html',
-  styleUrl: './add-group.scss',
+  templateUrl: './edit-group.component.html',
+  styleUrl: './edit-group.component.scss',
   standalone: true
 })
-export class AddGroup implements OnInit {
+export class EditGroup implements OnInit {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly groupForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required]

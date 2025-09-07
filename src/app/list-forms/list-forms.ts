@@ -9,6 +9,7 @@ import {
   MatRow, MatRowDef, MatTable
 } from "@angular/material/table";
 import {Form, FormService} from '../../../core/service/form-service';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-list-forms',
@@ -23,7 +24,8 @@ import {Form, FormService} from '../../../core/service/form-service';
     MatRow,
     MatRowDef,
     MatTable,
-    MatHeaderCellDef
+    MatHeaderCellDef,
+    MatProgressBar
   ],
   templateUrl: './list-forms.html',
   styleUrl: './list-forms.scss'
@@ -31,9 +33,16 @@ import {Form, FormService} from '../../../core/service/form-service';
 export class ListForms implements OnInit {
   protected readonly displayedColumns: string[] = ['name', 'groupName', 'fieldGroupCount'];
   protected readonly dataSource: WritableSignal<Form[]> = signal([]);
+  protected readonly loading: WritableSignal<boolean> = signal(false);
   private readonly formService: FormService = inject(FormService);
 
   async ngOnInit(): Promise<void> {
-    this.dataSource.set(await this.formService.getAllFormsAsync());
+    this.loading.set(true);
+    try{
+      this.dataSource.set(await this.formService.getAllFormsAsync());
+    }
+    finally{
+      this.loading.set(false);
+    }
   }
 }

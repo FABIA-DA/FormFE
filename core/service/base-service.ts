@@ -1,12 +1,14 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {z, ZodError} from 'zod';
+import {SnackbarService} from './snackbar-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export abstract class BaseService {
   private static readonly baseUrl: string = 'http://localhost:5200';
+  private readonly snackbar: SnackbarService = inject(SnackbarService);
   protected readonly http: HttpClient = inject(HttpClient);
 
   protected abstract get controller(): string;
@@ -36,10 +38,12 @@ export abstract class BaseService {
     return url;
   }
 
-  protected static async trySendRequest<T>(executeRequest: () => Promise<T>, errorLocation: string): Promise<T> {
+  protected async trySendRequest<T>(executeRequest: () => Promise<T>, errorLocation: string): Promise<T> {
     try {
       return await executeRequest();
     } catch (error) {
+
+      this.snackbar.show('An error occurred...');
       if (error instanceof HttpErrorResponse) {
         throw new Error(`${errorLocation} Http error: ${error.status} ${error}`);
       } else if (error instanceof ZodError) {

@@ -9,6 +9,7 @@ import {
   MatRow, MatRowDef, MatTable
 } from "@angular/material/table";
 import {FieldGroup, FieldGroupService} from '../../../core/service/field-group-service';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-list-field-groups',
@@ -23,7 +24,8 @@ import {FieldGroup, FieldGroupService} from '../../../core/service/field-group-s
     MatRow,
     MatRowDef,
     MatTable,
-    MatHeaderCellDef
+    MatHeaderCellDef,
+    MatProgressBar
   ],
   templateUrl: './list-field-groups.html',
   styleUrl: './list-field-groups.scss'
@@ -31,9 +33,16 @@ import {FieldGroup, FieldGroupService} from '../../../core/service/field-group-s
 export class ListFieldGroups implements OnInit{
     protected readonly displayedColumns: string[] = ['name', 'singleChoiceFieldCount', 'fieldCount'];
     protected readonly dataSource: WritableSignal<FieldGroup[]> = signal([]);
+    protected readonly loading: WritableSignal<boolean> = signal(false);
     private readonly fieldGroupService: FieldGroupService = inject(FieldGroupService);
 
   async ngOnInit(): Promise<void> {
-    this.dataSource.set(await this.fieldGroupService.getAllFieldGroupsAsync());
+    this.loading.set(true);
+    try{
+      this.dataSource.set(await this.fieldGroupService.getAllFieldGroupsAsync());
+    }
+    finally{
+      this.loading.set(false);
+    }
   }
 }

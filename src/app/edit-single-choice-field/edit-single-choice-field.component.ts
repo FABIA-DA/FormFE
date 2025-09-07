@@ -13,7 +13,7 @@ import {IdType} from '../../../core/service/base-service';
 import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
-  selector: 'app-add-single-choice-field',
+  selector: 'app-edit-single-choice-field',
   standalone: true,
   imports: [
     MatCardTitle,
@@ -29,10 +29,10 @@ import {MatProgressBar} from '@angular/material/progress-bar';
     AddMoreButton,
     MatProgressBar,
   ],
-  templateUrl: './add-single-choice-field.component.html',
-  styleUrl: './add-single-choice-field.component.scss'
+  templateUrl: './edit-single-choice-field.component.html',
+  styleUrl: './edit-single-choice-field.component.scss'
 })
-export class AddSingleChoiceField implements OnInit {
+export class EditSingleChoiceField implements OnInit {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly oneOfFieldForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
@@ -41,7 +41,7 @@ export class AddSingleChoiceField implements OnInit {
       this.createOption()
     ])
   });
-  protected fields: WritableSignal<Field[]>[] = AddSingleChoiceField.initFields();
+  protected fields: WritableSignal<Field[]>[] = EditSingleChoiceField.initFields();
   protected readonly isValid: Signal<boolean> = computed(() => {
     this.change();
     return this.oneOfFieldForm.valid;
@@ -69,7 +69,7 @@ export class AddSingleChoiceField implements OnInit {
     this.options.push(
       this.createOption()
     );
-    this.fields.push(AddSingleChoiceField.getFieldSignal());
+    this.fields.push(EditSingleChoiceField.getFieldSignal());
   }
 
   protected deleteOption(id: number): void {
@@ -124,7 +124,7 @@ export class AddSingleChoiceField implements OnInit {
 
   private resetForm(): void {
     this.oneOfFieldForm.reset();
-    this.fields = AddSingleChoiceField.initFields();
+    this.fields = EditSingleChoiceField.initFields();
   }
 
   private static initFields(): WritableSignal<Field[]>[] {

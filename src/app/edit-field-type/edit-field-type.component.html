@@ -3,7 +3,7 @@
 }
 @else {
   <mat-card>
-    <mat-card-title>Add Field Type</mat-card-title>
+    <mat-card-title>{{this.update() ? 'Update' : 'Add'}} Field Type</mat-card-title>
     <mat-card-content>
       <form [formGroup]="fieldTypeForm">
         <mat-form-field>
