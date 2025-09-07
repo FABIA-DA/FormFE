@@ -14,6 +14,7 @@ import {
 import {Field, FieldService} from '../../../core/service/field-service';
 import {IdType} from '../../../core/service/base-service';
 import {MatDivider} from '@angular/material/divider';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-add-field-group',
@@ -27,6 +28,7 @@ import {MatDivider} from '@angular/material/divider';
     ItemSelectionList,
     MatButton,
     MatDivider,
+    MatProgressBar,
   ],
   templateUrl: './add-field-group.component.html',
   styleUrl: './add-field-group.component.scss',
@@ -43,6 +45,7 @@ export class AddFieldGroup implements OnInit {
     this.change();
     return this.name.valid;
   });
+  protected readonly processing: WritableSignal<boolean> = signal(false);
   private readonly change: Signal<any> = toSignal(this.name.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
   private readonly fieldGroupService: FieldGroupService = inject(FieldGroupService);
@@ -70,9 +73,15 @@ export class AddFieldGroup implements OnInit {
     const fieldIds: IdType[] = this.selectedFields().map(f => f.id);
     const singleChoiceFieldIds: IdType[] = this.selectedSingleChoiceFields().map(f => f.id);
 
-    await this.fieldGroupService.createFieldGroupAsync(name, fieldIds, singleChoiceFieldIds);
-    this.snackbar.show('The field group was submitted successfully');
-    this.resetForm();
+    this.processing.set(true);
+    try{
+      await this.fieldGroupService.createFieldGroupAsync(name, fieldIds, singleChoiceFieldIds);
+      this.snackbar.show('The field group was submitted successfully');
+      this.resetForm();
+    }
+    finally{
+      this.processing.set(false);
+    }
   }
 
   private resetForm(): void {

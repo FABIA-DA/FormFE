@@ -11,6 +11,7 @@ import {FieldGroup, FieldGroupService} from '../../../core/service/field-group-s
 import {IdType} from '../../../core/service/base-service';
 import {Group} from '../../../core/service/group-service';
 import {MatDivider} from '@angular/material/divider';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-add-form',
@@ -23,7 +24,8 @@ import {MatDivider} from '@angular/material/divider';
     MatError,
     MatLabel,
     ItemSelectionList,
-    MatDivider
+    MatDivider,
+    MatProgressBar
   ],
   templateUrl: './add-form.html',
   styleUrl: './add-form.scss',
@@ -42,6 +44,7 @@ export class AddForm implements OnInit {
   protected readonly selectedGroup: WritableSignal<Group | undefined> = signal(undefined);
   protected readonly selectedFieldGroups: WritableSignal<FieldGroup[]> = signal([]);
   protected readonly possibleFieldGroups: WritableSignal<FieldGroup[]> = signal([]);
+  protected readonly processing: WritableSignal<boolean> = signal(false);
   private readonly change: Signal<any> = toSignal(this.formForm.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
   private readonly formService: FormService = inject(FormService);
@@ -66,10 +69,15 @@ export class AddForm implements OnInit {
     const groupId: IdType | null = null;
     const fieldGroupIds: IdType[] = this.selectedFieldGroups().map(g => g.id);
 
-
-    await this.formService.createFormAsync(name, groupId, fieldGroupIds);
-    this.snackbar.show('The form was submitted successfully');
-    this.resetForm();
+    this.processing.set(true);
+    try{
+      await this.formService.createFormAsync(name, groupId, fieldGroupIds);
+      this.snackbar.show('The form was submitted successfully');
+      this.resetForm();
+    }
+    finally{
+      this.processing.set(false);
+    }
   }
 
   private resetForm(): void {

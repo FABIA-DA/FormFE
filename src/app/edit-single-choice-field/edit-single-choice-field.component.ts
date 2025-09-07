@@ -10,6 +10,7 @@ import {AddMoreButton} from '../../../core/shared/add-more-button/add-more-butto
 import {Field, FieldService} from '../../../core/service/field-service';
 import {SingleChoiceFieldService} from '../../../core/service/single-choice-field-service';
 import {IdType} from '../../../core/service/base-service';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-add-single-choice-field',
@@ -26,6 +27,7 @@ import {IdType} from '../../../core/service/base-service';
     MatCardActions,
     ItemSelectionList,
     AddMoreButton,
+    MatProgressBar,
   ],
   templateUrl: './add-single-choice-field.component.html',
   styleUrl: './add-single-choice-field.component.scss'
@@ -45,6 +47,7 @@ export class AddSingleChoiceField implements OnInit {
     return this.oneOfFieldForm.valid;
   });
   protected readonly possibleFields: WritableSignal<Field[]> = signal([]);
+  protected readonly processing: WritableSignal<boolean> = signal(false);
   private readonly change: Signal<any> = toSignal(this.oneOfFieldForm.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
   private readonly singleChoiceFieldService: SingleChoiceFieldService = inject(SingleChoiceFieldService);
@@ -108,9 +111,15 @@ export class AddSingleChoiceField implements OnInit {
       });
     }
 
-    await this.singleChoiceFieldService.createSingleChoiceFieldAsync(name, options);
-    this.snackbar.show('The field was submitted successfully');
-    this.resetForm();
+    this.processing.set(true);
+    try{
+      await this.singleChoiceFieldService.createSingleChoiceFieldAsync(name, options);
+      this.snackbar.show('The field was submitted successfully');
+      this.resetForm();
+    }
+    finally{
+      this.processing.set(false);
+    }
   }
 
   private resetForm(): void {

@@ -1,4 +1,4 @@
-import {Component, computed, inject, Signal} from '@angular/core';
+import {Component, computed, inject, signal, Signal, WritableSignal} from '@angular/core';
 import {MatCardModule} from '@angular/material/card';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {FieldTypeService} from '../../../core/service/field-type-service';
@@ -7,11 +7,12 @@ import {SnackbarService} from '../../../core/service/snackbar-service';
 import {MatError, MatFormField} from '@angular/material/form-field';
 import {MatInput, MatLabel} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
   standalone: true,
   selector: 'app-add-field-type',
-  imports: [MatCardModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton],
+  imports: [MatCardModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton, MatProgressBar],
   templateUrl: './add-field-type.html',
   styleUrl: './add-field-type.scss'
 })
@@ -26,6 +27,7 @@ export class AddFieldType {
       this.valueChanged();
       return this.fieldTypeForm.valid;
   });
+  protected readonly processing: WritableSignal<boolean> = signal(false);
   private readonly valueChanged: Signal<any> = toSignal(this.fieldTypeForm.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
   private readonly fieldTypeService: FieldTypeService = inject(FieldTypeService);
@@ -48,9 +50,14 @@ export class AddFieldType {
       return;
     }
 
-    await this.fieldTypeService.createFieldTypeAsync(name, description, regex);
-    this.snackbar.show('Field type was submitted successfully.');
-    this.fieldTypeForm.reset();
-    return;
+    this.processing.set(true);
+    try{
+      await this.fieldTypeService.createFieldTypeAsync(name, description, regex);
+      this.snackbar.show('Field type was submitted successfully.');
+      this.fieldTypeForm.reset();
+    }
+    finally {
+      this.processing.set(false);
+    }
   }
 }

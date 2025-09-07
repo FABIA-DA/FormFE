@@ -11,6 +11,7 @@ import {FieldService} from '../../../core/service/field-service';
 import {FieldType, FieldTypeService} from '../../../core/service/field-type-service';
 import {ItemSelectionList} from '../../../core/shared/item-selection-list/item-selection-list.component';
 import {MatDivider} from '@angular/material/divider';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-add-field',
@@ -28,6 +29,7 @@ import {MatDivider} from '@angular/material/divider';
     MatButton,
     ItemSelectionList,
     MatDivider,
+    MatProgressBar,
   ],
   templateUrl: './add-field.component.html',
   styleUrl: './add-field.component.scss',
@@ -46,6 +48,7 @@ export class AddField implements OnInit {
   });
   protected readonly fieldTypes: WritableSignal<FieldType[]> = signal([]);
   protected readonly selectedFieldType: WritableSignal<FieldType | undefined> = signal(undefined);
+  protected readonly processing: WritableSignal<boolean> = signal(false);
   private readonly valueChanged: Signal<any> = toSignal(this.fieldForm.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
   private readonly fieldService: FieldService = inject(FieldService);
@@ -75,10 +78,15 @@ export class AddField implements OnInit {
       return;
     }
 
-    await this.fieldService.createFieldAsync(type.id, name, description, isOptional);
-    this.snackbar.show('Form field was submitted successfully.');
-    this.reset();
-    return;
+    this.processing.set(true);
+    try{
+      await this.fieldService.createFieldAsync(type.id, name, description, isOptional);
+      this.snackbar.show('Form field was submitted successfully.');
+      this.reset();
+    }
+    finally{
+      this.processing.set(false);
+    }
   }
 
   private reset(){

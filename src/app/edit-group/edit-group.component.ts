@@ -17,10 +17,11 @@ import {FieldGroupZod} from '../../../core/service/field-group-service';
 import {FieldZod} from '../../../core/service/field-service';
 import {OptionZod, SingleChoiceFieldZod} from '../../../core/service/single-choice-field-service';
 import {FieldTypeZod} from '../../../core/service/field-type-service';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-add-group',
-  imports: [MatCardModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton, ItemSelectionList, MatDivider],
+  imports: [MatCardModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton, ItemSelectionList, MatDivider, MatProgressBar],
   templateUrl: './add-group.html',
   styleUrl: './add-group.scss',
   standalone: true
@@ -39,6 +40,7 @@ export class AddGroup implements OnInit {
   protected readonly selectedParent: WritableSignal<Group | undefined> = signal(undefined);
   protected readonly possibleForms: WritableSignal<Form[]> = signal([]);
   protected readonly selectedForms: WritableSignal<Form[]> = signal([]);
+  protected readonly processing: WritableSignal<boolean> = signal(false);
   private readonly valueChanged: Signal<any> = toSignal(this.groupForm.valueChanges);
   private readonly groupService: GroupService = inject(GroupService);
   private readonly formService: FormService = inject(FormService);
@@ -94,9 +96,15 @@ export class AddGroup implements OnInit {
     const subgroupIds: IdType[] = subgroups.map(g => g.id);
     const formIds: IdType[] = forms.map(g => g.id);
 
-    await this.groupService.createGroupAsync(name, parentGroup?.id === undefined ? null : parentGroup?.id, subgroupIds, formIds);
-    this.snackbar.show('The group was submitted successfully');
-    this.reset();
+    this.processing.set(true);
+    try{
+      await this.groupService.createGroupAsync(name, parentGroup?.id === undefined ? null : parentGroup?.id, subgroupIds, formIds);
+      this.snackbar.show('The group was submitted successfully');
+      this.reset();
+    }
+    finally{
+      this.processing.set(false);
+    }
   }
 
   private reset(): void {

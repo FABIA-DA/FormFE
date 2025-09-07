@@ -1,0 +1,32 @@
+@if(this.processing()){
+  <mat-progress-bar mode="indeterminate"/>
+}
+@else {
+  <mat-card>
+    <mat-card-title>Add Form</mat-card-title>
+    <mat-card-content>
+      <form [formGroup]="formForm">
+        <div class="form-field-container">
+          <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name">
+            @if(this.formForm.get('name')?.hasError('required')){
+              <mat-error>Name is required</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <mat-divider/>
+        <div>
+          <app-item-selection-list [possibleItems]="this.possibleGroups()" [(selectionItem)]="this.selectedGroup" [itemName]="'Group'"/>
+        </div>
+        <mat-divider/>
+        <div>
+          <app-item-selection-list [(selectionItem)]="this.selectedFieldGroups" [possibleItems]="this.possibleFieldGroups()" [itemName]="'Field Groups'"/>
+        </div>
+      </form>
+    </mat-card-content>
+    <mat-card-actions>
+      <button matButton="filled" [disabled]="!this.isValid()" (click)="submitForm()">Submit</button>
+    </mat-card-actions>
+  </mat-card>
+}
