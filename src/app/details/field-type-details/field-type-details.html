@@ -1,0 +1,16 @@
+@let fieldType = this.fieldType();
+@if (this.loading()) {
+  <mat-progress-bar mode="indeterminate"/>
+} @else if (fieldType !== undefined) {
+  <div class="content-wrapper">
+    <div class="button-wrapper">
+      <button matFab aria-label="Button to edit this field type" [routerLink]="['edit-field-type', fieldType.id]">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button matFab aria-label="Button to delete this field type" (click)="delete()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+    <app-field-type-presentation [fieldType]="fieldType"/>
+  </div>
+}

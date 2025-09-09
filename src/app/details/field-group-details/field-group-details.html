@@ -1,0 +1,17 @@
+@let fieldGroup = this.fieldGroup();
+@if(this.loading()){
+  <mat-progress-bar mode="indeterminate"/>
+}
+@else if(fieldGroup !== undefined){
+  <div class="content-wrapper">
+    <div class="button-wrapper">
+      <button matFab aria-label="Button to edit this field group" [routerLink]="['edit-field-group', fieldGroup.id]">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button matFab aria-label="Button to delete this field group" (click)="delete()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+    <app-field-group-presentation [fieldGroup]="fieldGroup"/>
+  </div>
+}

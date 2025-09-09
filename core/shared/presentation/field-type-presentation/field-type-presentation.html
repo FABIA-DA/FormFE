@@ -1,0 +1,14 @@
+<table>
+  <tr>
+    <th>Field Type Name</th>
+    <td>{{this.fieldType().name}}</td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td>{{this.fieldType().description === null ? '-' : this.fieldType().description}}</td>
+  </tr>
+  <tr>
+    <th>Regex</th>
+    <td>{{this.fieldType().regex}}</td>
+  </tr>
+</table>

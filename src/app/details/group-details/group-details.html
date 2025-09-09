@@ -1,0 +1,17 @@
+@let group = this.group();
+@if(this.loading()){
+  <mat-progress-bar mode="indeterminate"/>
+}
+@else if(group !== undefined){
+  <div class="content-wrapper">
+    <div class="button-wrapper">
+      <button matFab aria-label="Button to edit this group" [routerLink]="['edit-group', group.id]">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button matFab aria-label="Button to delete this group" (click)="delete()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+    <app-group-presentation [group]="group"/>
+  </div>
+}

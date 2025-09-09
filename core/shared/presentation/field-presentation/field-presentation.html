@@ -1,0 +1,20 @@
+<table>
+  <tr>
+    <th>Field Name</th>
+    <td>{{this.field().name}}</td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td>{{this.field().description | optionalString}}</td>
+  </tr>
+  <tr>
+    <th>Is Optional</th>
+    <td>{{this.field().isOptional | booleanPipe}}</td>
+  </tr>
+  <tr>
+    <th>Field Type</th>
+    <td>
+      <app-field-type-presentation [fieldType]="this.field().type"/>
+    </td>
+  </tr>
+</table>

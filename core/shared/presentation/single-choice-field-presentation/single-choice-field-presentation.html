@@ -1,0 +1,14 @@
+<table>
+  <tr>
+    <th>Single Choice Field Name</th>
+    <td>{{this.singleChoiceField().name}}</td>
+  </tr>
+  <tr>
+    <th>Options</th>
+    <td>
+      @for(option of this.singleChoiceField().options; track option.id){
+        <app-option-presentation [option]="option"/>
+      }
+    </td>
+  </tr>
+</table>

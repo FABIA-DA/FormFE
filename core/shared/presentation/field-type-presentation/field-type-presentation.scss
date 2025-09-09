@@ -1,0 +1,12 @@
+th {
+  color: var(--mat-sys-primary);
+}
+
+th, td {
+  text-align: start;
+}
+
+tr:first-child > * {
+  font-size: 1.5rem;
+  font-weight: bold;
+}

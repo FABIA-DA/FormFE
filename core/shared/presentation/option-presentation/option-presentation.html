@@ -1,0 +1,14 @@
+<table>
+  <tr>
+    <th>Option Name</th>
+    <td>{{this.option().name}}</td>
+  </tr>
+  <tr>
+    <th>Option Fields</th>
+    <td>
+      @for(field of this.option().fields; track field.id){
+        <app-field-presentation [field]="field"/>
+      }
+    </td>
+  </tr>
+</table>

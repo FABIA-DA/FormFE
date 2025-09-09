@@ -1,0 +1,22 @@
+<table>
+  <tr>
+    <th>Field Group Name</th>
+    <td>{{this.fieldGroup().name}}</td>
+  </tr>
+  <tr>
+    <th>Single Choice Fields</th>
+    <td>
+      @for(singleChoiceField of this.fieldGroup().singleChoiceFields; track singleChoiceField.id) {
+        <app-single-choice-field-presentation [singleChoiceField]="singleChoiceField"/>
+      }
+    </td>
+  </tr>
+  <tr>
+    <th>Fields</th>
+    <td>
+      @for(field of this.fieldGroup().fields; track field.id) {
+        <app-field-presentation [field]="field"/>
+      }
+    </td>
+  </tr>
+</table>

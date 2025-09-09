@@ -1,0 +1,22 @@
+th, td {
+  --color: var(--mat-sys-secondary);
+}
+
+th {
+  color: var(--color);
+}
+
+th, td {
+  text-align: start;
+}
+
+tr:first-child > * {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+tr:last-child > td {
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-left-color: var(--color);
+}

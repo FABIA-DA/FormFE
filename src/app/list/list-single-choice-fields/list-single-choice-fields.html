@@ -1,0 +1,19 @@
+@if(this.loading()){
+  <mat-progress-bar mode="indeterminate"/>
+}
+@else {
+  <table mat-table [dataSource]="this.dataSource()">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="optionCount">
+      <th mat-header-cell *matHeaderCellDef> Option Count </th>
+      <td mat-cell *matCellDef="let element"> {{element.options.length}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row class="data-row" *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/single-choice-field-details', row.id]"></tr>
+  </table>
+}

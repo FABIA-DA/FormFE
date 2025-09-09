@@ -1,0 +1,22 @@
+<table>
+  <tr>
+    <th>Group Name</th>
+    <td>{{this.group().name}}</td>
+  </tr>
+  <tr>
+    <th>Parent Group Name</th>
+    <td>{{this.group().parentName | optionalString}}</td>
+  </tr>
+  <tr>
+    <th>Subgroups</th>
+    <td>{{this.group().subGroups}}</td>
+  </tr>
+  <tr>
+    <th>Forms</th>
+    <td>
+      @for(form of this.group().forms; track form.id) {
+        <app-form-presentation [form]="form"/>
+      }
+    </td>
+  </tr>
+</table>
