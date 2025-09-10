@@ -12,8 +12,8 @@ export class GroupService extends BaseService {
     return 'api/groups';
   }
 
-  public async getAllGroupsAsync(): Promise<Group[]> {
-    return await this.trySendRequest(async (): Promise<Group[]> => {
+  public async getAllGroupsAsync(): Promise<GroupListPresentation[]> {
+    return await this.trySendRequest(async (): Promise<GroupListPresentation[]> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: GroupListResponse = GroupListResponseZod.parse(response.body);
@@ -87,8 +87,19 @@ export const GroupZod = MinimalGroupZod.extend({
 
 export type Group = z.infer<typeof GroupZod>;
 
+export const GroupListPresentationZod = z.object({
+  id: IdTypeZod,
+  name: z.string().nonempty(),
+  parentId: IdTypeZod.nullable(),
+  parentName: z.string().nonempty().nullable(),
+  subgroupCount: z.number().nonnegative(),
+  formCount: z.number().nonnegative()
+});
+
+export type GroupListPresentation = z.infer<typeof GroupListPresentationZod>;
+
 const GroupListResponseZod = z.object({
-  groups: z.array(GroupZod),
+  groups: z.array(GroupListPresentationZod),
 });
 
 export type GroupListResponse = z.infer<typeof GroupListResponseZod>;

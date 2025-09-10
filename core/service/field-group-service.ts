@@ -5,6 +5,7 @@ import {SingleChoiceFieldZod} from './single-choice-field-service';
 import {Injectable} from '@angular/core';
 import {firstValueFrom} from 'rxjs';
 import {id} from 'zod/v4/locales';
+import {FieldGroupPresentation} from '../shared/presentation/field-group-presentation/field-group-presentation';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +15,8 @@ export class FieldGroupService extends BaseService {
     return 'api/field-groups';
   }
 
-  public async getAllFieldGroupsAsync(): Promise<FieldGroup[]> {
-    return await this.trySendRequest(async (): Promise<FieldGroup[]> => {
+  public async getAllFieldGroupsAsync(): Promise<FieldGroupListPresentation[]> {
+    return await this.trySendRequest(async (): Promise<FieldGroupListPresentation[]> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: FieldGroupListResponse = FieldGroupListResponseZod.parse(response.body);
@@ -76,8 +77,17 @@ export const FieldGroupZod = z.object({
 
 export type FieldGroup = z.infer<typeof FieldGroupZod>;
 
+export const FieldGroupPresentationZod = z.object({
+  id: IdTypeZod,
+  name: z.string().nonempty(),
+  singleChoiceFieldCount: z.number().nonnegative(),
+  fieldCount: z.number().nonnegative()
+});
+
+export type FieldGroupListPresentation = z.infer<typeof FieldGroupPresentationZod>;
+
 const FieldGroupListResponseZod = z.object({
-  fieldGroups: z.array(FieldGroupZod),
+  fieldGroups: z.array(FieldGroupPresentationZod),
 });
 
 export type FieldGroupListResponse = z.infer<typeof FieldGroupListResponseZod>;

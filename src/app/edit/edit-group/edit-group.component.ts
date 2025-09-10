@@ -1,9 +1,15 @@
 import {Component, computed, inject, OnDestroy, OnInit, signal, Signal, WritableSignal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {Group, GroupService, GroupZod, MinimalGroupZod} from '../../../../core/service/group-service';
+import {
+  Group,
+  GroupListPresentation,
+  GroupService,
+  GroupZod,
+  MinimalGroupZod
+} from '../../../../core/service/group-service';
 import {SnackbarService} from '../../../../core/service/snackbar-service';
-import {Form, FormService, FormZod, MinimalFormZod} from '../../../../core/service/form-service';
+import {Form, FormListPresentation, FormService, FormZod, MinimalFormZod} from '../../../../core/service/form-service';
 import {MatCardModule} from '@angular/material/card';
 import {MatError, MatFormField} from '@angular/material/form-field';
 import {MatInput, MatLabel} from '@angular/material/input';
@@ -37,11 +43,11 @@ export class EditGroup implements OnInit, OnDestroy {
     this.valueChanged();
     return this.groupForm.valid;
   });
-  protected readonly possibleGroups: WritableSignal<Group[]> = signal([]);
-  protected readonly selectedSubgroups: WritableSignal<Group[]> = signal([]);
-  protected readonly selectedParent: WritableSignal<Group | undefined> = signal(undefined);
-  protected readonly possibleForms: WritableSignal<Form[]> = signal([]);
-  protected readonly selectedForms: WritableSignal<Form[]> = signal([]);
+  protected readonly possibleGroups: WritableSignal<GroupListPresentation[]> = signal([]);
+  protected readonly selectedSubgroups: WritableSignal<GroupListPresentation[]> = signal([]);
+  protected readonly selectedParent: WritableSignal<GroupListPresentation | undefined> = signal(undefined);
+  protected readonly possibleForms: WritableSignal<FormListPresentation[]> = signal([]);
+  protected readonly selectedForms: WritableSignal<FormListPresentation[]> = signal([]);
   protected readonly processing: WritableSignal<boolean> = signal(false);
   private readonly group: WritableSignal<Group | undefined> = signal(undefined);
   protected readonly isUpdate: Signal<boolean> = computed(() => {
@@ -87,10 +93,10 @@ export class EditGroup implements OnInit, OnDestroy {
     }
 
     const name: string | null = this.groupForm.get('name')?.value;
-    const parentGroup: Group | undefined = this.selectedParent();
+    const parentGroup: GroupListPresentation | undefined = this.selectedParent();
     const parentGroupId: IdType | null = parentGroup?.id === undefined ? null : parentGroup!.id;
-    const subgroups: Group[] = this.selectedSubgroups();
-    const forms: Form[] = this.selectedForms();
+    const subgroups: GroupListPresentation[] = this.selectedSubgroups();
+    const forms: FormListPresentation[] = this.selectedForms();
 
     if (!name) {
       this.snackbar.show('Some fields are still invalid...');

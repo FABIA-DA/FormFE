@@ -8,7 +8,7 @@ import {
   MatHeaderRowDef,
   MatRow, MatRowDef, MatTable
 } from "@angular/material/table";
-import {FieldGroup, FieldGroupService} from '../../../../core/service/field-group-service';
+import {FieldGroup, FieldGroupListPresentation, FieldGroupService} from '../../../../core/service/field-group-service';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {RouterLink} from '@angular/router';
 
@@ -34,7 +34,7 @@ import {RouterLink} from '@angular/router';
 })
 export class ListFieldGroups implements OnInit{
     protected readonly displayedColumns: string[] = ['name', 'singleChoiceFieldCount', 'fieldCount'];
-    protected readonly dataSource: WritableSignal<FieldGroup[]> = signal([]);
+    protected readonly dataSource: WritableSignal<FieldGroupListPresentation[]> = signal([]);
     protected readonly loading: WritableSignal<boolean> = signal(false);
     private readonly fieldGroupService: FieldGroupService = inject(FieldGroupService);
 

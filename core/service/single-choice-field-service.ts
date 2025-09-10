@@ -13,8 +13,8 @@ export class SingleChoiceFieldService extends BaseService {
     return 'api/single-choice-fields';
   }
 
-  public async getAllSingleChoiceFieldsAsync(): Promise<SingleChoiceField[]> {
-    return await this.trySendRequest(async (): Promise<SingleChoiceField[]> => {
+  public async getAllSingleChoiceFieldsAsync(): Promise<SingleChoiceFieldListPresentation[]> {
+    return await this.trySendRequest(async (): Promise<SingleChoiceFieldListPresentation[]> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: SingleChoiceFieldListResponse = SingleChoiceFieldListResponseZod.parse(response.body);
@@ -90,8 +90,16 @@ export const SingleChoiceFieldZod = z.object({
 
 export type SingleChoiceField = z.infer<typeof SingleChoiceFieldZod>;
 
+export const SingleChoiceFieldListPresentationZod = z.object({
+  id: IdTypeZod,
+  name: z.string().nonempty(),
+  optionCount: z.number().nonnegative()
+});
+
+export type SingleChoiceFieldListPresentation = z.infer<typeof SingleChoiceFieldListPresentationZod>;
+
 const SingleChoiceFieldListResponseZod = z.object({
-  fields: z.array(SingleChoiceFieldZod)
+  fields: z.array(SingleChoiceFieldListPresentationZod)
 });
 
 export type SingleChoiceFieldListResponse = z.infer<typeof SingleChoiceFieldListResponseZod>;

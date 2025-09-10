@@ -7,18 +7,18 @@
 
   <ng-container matColumnDef="parentName">
     <th mat-header-cell *matHeaderCellDef> Parent Group Name</th>
-    <td mat-cell *matCellDef="let element"> {{ element.parentName == null ? '-' : element.parentName }}</td>
+    <td mat-cell *matCellDef="let element"> {{ element.parentName | optionalString }}</td>
   </ng-container>
 
   <ng-container matColumnDef="subgroupCount">
     <th mat-header-cell *matHeaderCellDef> Subgroup Count</th>
-    <td mat-cell *matCellDef="let element"> {{ element.subGroups.length }}
+    <td mat-cell *matCellDef="let element"> {{ element.subgroupCount }}
     </td>
   </ng-container>
 
   <ng-container matColumnDef="formCount">
     <th mat-header-cell *matHeaderCellDef> Form Count</th>
-    <td mat-cell *matCellDef="let element"> {{ element.forms.length }}</td>
+    <td mat-cell *matCellDef="let element"> {{ element.formCount }}</td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

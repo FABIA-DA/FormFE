@@ -8,7 +8,7 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import {SnackbarService} from '../../../../core/service/snackbar-service';
 import {FieldGroup, FieldGroupService} from '../../../../core/service/field-group-service';
 import {
-  SingleChoiceField,
+  SingleChoiceField, SingleChoiceFieldListPresentation,
   SingleChoiceFieldService
 } from '../../../../core/service/single-choice-field-service';
 import {Field, FieldService} from '../../../../core/service/field-service';
@@ -41,8 +41,8 @@ export class EditFieldGroup implements OnInit, OnDestroy {
   protected readonly name: FormControl = this.formBuilder.control('', Validators.required);
   protected readonly selectedFields: WritableSignal<Field[]> = signal([]);
   protected readonly possibleFields: WritableSignal<Field[]> = signal([]);
-  protected readonly selectedSingleChoiceFields: WritableSignal<SingleChoiceField[]> = signal([]);
-  protected readonly possibleSingleChoiceFields: WritableSignal<SingleChoiceField[]> = signal([]);
+  protected readonly selectedSingleChoiceFields: WritableSignal<SingleChoiceFieldListPresentation[]> = signal([]);
+  protected readonly possibleSingleChoiceFields: WritableSignal<SingleChoiceFieldListPresentation[]> = signal([]);
   protected readonly isValid: Signal<boolean> = computed(() => {
     this.change();
     return this.name.valid;

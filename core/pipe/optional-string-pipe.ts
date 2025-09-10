@@ -5,8 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class OptionalStringPipe implements PipeTransform {
 
-  transform(value: string | null): string {
-    return value === null ? '-' : value;
+  transform(value: string | null | undefined): string {
+    return value == null ? '-' : value;
   }
 
 }

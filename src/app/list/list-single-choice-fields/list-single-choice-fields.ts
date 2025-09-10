@@ -8,7 +8,11 @@ import {
   MatHeaderRowDef,
   MatRow, MatRowDef, MatTable
 } from '@angular/material/table';
-import {SingleChoiceField, SingleChoiceFieldService} from '../../../../core/service/single-choice-field-service';
+import {
+  SingleChoiceField,
+  SingleChoiceFieldListPresentation,
+  SingleChoiceFieldService
+} from '../../../../core/service/single-choice-field-service';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {RouterLink} from '@angular/router';
 
@@ -34,7 +38,7 @@ import {RouterLink} from '@angular/router';
 })
 export class ListSingleChoiceFields implements OnInit {
   protected readonly displayedColumns: string[] = ['name', 'optionCount'];
-  protected readonly dataSource: WritableSignal<SingleChoiceField[]> = signal([]);
+  protected readonly dataSource: WritableSignal<SingleChoiceFieldListPresentation[]> = signal([]);
   protected readonly loading: WritableSignal<boolean> = signal(false);
   private readonly singleChoiceFieldService: SingleChoiceFieldService = inject(SingleChoiceFieldService);
 

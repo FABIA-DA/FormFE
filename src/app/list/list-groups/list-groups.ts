@@ -8,8 +8,9 @@ import {
   MatRow, MatRowDef,
   MatTable
 } from '@angular/material/table';
-import {Group, GroupService} from '../../../../core/service/group-service';
+import {Group, GroupListPresentation, GroupListResponse, GroupService} from '../../../../core/service/group-service';
 import {RouterLink} from '@angular/router';
+import {OptionalStringPipe} from '../../../../core/pipe/optional-string-pipe';
 
 @Component({
   selector: 'app-list-groups',
@@ -24,14 +25,15 @@ import {RouterLink} from '@angular/router';
     MatHeaderRowDef,
     MatRowDef,
     MatHeaderCell,
-    RouterLink
+    RouterLink,
+    OptionalStringPipe
   ],
   templateUrl: './list-groups.html',
   styleUrl: './list-groups.scss'
 })
 export class ListGroups implements OnInit {
   protected readonly displayedColumns: string[] = ['name', 'parentName', 'subgroupCount', 'formCount'];
-  protected readonly dataSource: WritableSignal<Group[]> = signal([]);
+  protected readonly dataSource: WritableSignal<GroupListPresentation[]> = signal([]);
   protected readonly loading: WritableSignal<boolean> = signal(false);
   private readonly groupService: GroupService = inject(GroupService);
 

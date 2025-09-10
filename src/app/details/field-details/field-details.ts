@@ -7,7 +7,6 @@ import {IdType} from '../../../../core/service/base-service';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {MatFabButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
-import {FieldTypePresentation} from '../../../../core/shared/presentation/field-type-presentation/field-type-presentation';
 import {FieldPresentation} from '../../../../core/shared/presentation/field-presentation/field-presentation';
 
 @Component({
@@ -17,7 +16,6 @@ import {FieldPresentation} from '../../../../core/shared/presentation/field-pres
     MatFabButton,
     RouterLink,
     MatIcon,
-    FieldTypePresentation,
     FieldPresentation
   ],
   templateUrl: './field-details.html',

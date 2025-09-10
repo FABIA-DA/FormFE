@@ -13,8 +13,8 @@ export class FormService extends BaseService {
     return `api/forms`;
   }
 
-  public async getAllFormsAsync(): Promise<Form[]> {
-    return await this.trySendRequest(async (): Promise<Form[]> => {
+  public async getAllFormsAsync(): Promise<FormListPresentation[]> {
+    return await this.trySendRequest(async (): Promise<FormListPresentation[]> => {
       const url: string = this.buildUrl(null);
       const response = await firstValueFrom(this.http.get(url, {observe: 'response'}));
       const result: FormListResponse = FormListResponseZod.parse(response.body);
@@ -84,8 +84,18 @@ export const FormZod = MinimalFormZod.extend({
 
 export type Form = z.infer<typeof FormZod>;
 
+export const FormListPresentationZod = z.object({
+  id: IdTypeZod,
+  name: z.string().nonempty(),
+  groupId: IdTypeZod.nullable(),
+  groupName: z.string().nonempty().nullable(),
+  fieldGroupCount: z.number().nonnegative()
+});
+
+export type FormListPresentation = z.infer<typeof FormListPresentationZod>;
+
 const FormListResponseZod = z.object({
-  forms: z.array(FormZod)
+  forms: z.array(FormListPresentationZod)
 });
 
 export type FormListResponse = z.infer<typeof FormListResponseZod>;

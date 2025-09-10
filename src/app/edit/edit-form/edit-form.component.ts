@@ -7,9 +7,9 @@ import {SnackbarService} from '../../../../core/service/snackbar-service';
 import {Form, FormService} from '../../../../core/service/form-service';
 import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {ItemSelectionList} from '../../../../core/shared/item-selection-list/item-selection-list.component';
-import {FieldGroup, FieldGroupService} from '../../../../core/service/field-group-service';
+import {FieldGroup, FieldGroupListPresentation, FieldGroupService} from '../../../../core/service/field-group-service';
 import {IdType} from '../../../../core/service/base-service';
-import {Group} from '../../../../core/service/group-service';
+import {Group, GroupListPresentation} from '../../../../core/service/group-service';
 import {MatDivider} from '@angular/material/divider';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {ActivatedRoute} from '@angular/router';
@@ -42,10 +42,10 @@ export class EditForm implements OnInit, OnDestroy {
     this.change();
     return this.formForm.valid;
   });
-  protected readonly possibleGroups: WritableSignal<Group[]> = signal([]);
-  protected readonly selectedGroup: WritableSignal<Group | undefined> = signal(undefined);
-  protected readonly selectedFieldGroups: WritableSignal<FieldGroup[]> = signal([]);
-  protected readonly possibleFieldGroups: WritableSignal<FieldGroup[]> = signal([]);
+  protected readonly possibleGroups: WritableSignal<GroupListPresentation[]> = signal([]);
+  protected readonly selectedGroup: WritableSignal<GroupListPresentation | undefined> = signal(undefined);
+  protected readonly selectedFieldGroups: WritableSignal<FieldGroupListPresentation[]> = signal([]);
+  protected readonly possibleFieldGroups: WritableSignal<FieldGroupListPresentation[]> = signal([]);
   protected readonly processing: WritableSignal<boolean> = signal(false);
   private readonly form: WritableSignal<Form | undefined> = signal(undefined);
   protected readonly isUpdate: Signal<boolean> = computed(() => {
