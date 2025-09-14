@@ -66,19 +66,11 @@ export class FormService extends BaseService {
   }
 }
 
-export const MinimalFormZod = z.object({
-  id: IdTypeZod,
-  groupId: IdTypeZod.nullable(),
-  name: z.string().nonempty()
-});
-
-export type MinimalFormZod = z.infer<typeof MinimalFormZod>;
-
-export const FormZod = MinimalFormZod.extend({
+export const FormZod = z.object({
   id: IdTypeZod,
   groupId: IdTypeZod.nullable(),
   name: z.string().nonempty(),
-  group: MinimalGroupZod.nullable(),
+  groupName: z.string().nonempty().nullable(),
   fieldGroups: z.array(FieldGroupZod),
 });
 

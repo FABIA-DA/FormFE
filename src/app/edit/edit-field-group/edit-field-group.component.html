@@ -1,27 +1,36 @@
-@if(this.processing()){
-  <mat-progress-bar mode="indeterminate"/>
-}
-@else {
-  <mat-card>
-    <mat-card-title>{{this.isUpdate() ? 'Update' : 'Add'}} Field Group</mat-card-title>
-    <mat-card-content>
-      <mat-form-field>
-        <mat-label>Name</mat-label>
-        <input matInput [formControl]="name">
-        @if (this.name.hasError('required')) {
-          <mat-error>Name is required</mat-error>
-        }
-      </mat-form-field>
-      <div>
-        <app-item-selection-list [possibleItems]="possibleSingleChoiceFields()" [(selectionItem)]="selectedSingleChoiceFields" [itemName]="'Single Choice Fields'"/>
-      </div>
-      <mat-divider/>
-      <div>
-        <app-item-selection-list [possibleItems]="this.possibleFields()" [(selectionItem)]="this.selectedFields" [itemName]="'Fields'"/>
-      </div>
-    </mat-card-content>
-    <mat-card-actions>
-      <button matButton="filled" (click)="submitFormGroup()" [disabled]="!this.isValid()">Submit</button>
-    </mat-card-actions>
-  </mat-card>
-}
+<div class="content-wrapper">
+  <div class="button-wrapper">
+    @if(this.isUpdate()){
+      <button matFab aria-label="Go back to the previously selected field group" [routerLink]="['/field-group-details', this.fieldGroup()!.id]">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    }
+  </div>
+  @if(this.processing()){
+    <mat-progress-bar mode="indeterminate"/>
+  }
+  @else {
+    <mat-card>
+      <mat-card-title>{{this.isUpdate() ? 'Update' : 'Add'}} Field Group</mat-card-title>
+      <mat-card-content>
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput [formControl]="name">
+          @if (this.name.hasError('required')) {
+            <mat-error>Name is required</mat-error>
+          }
+        </mat-form-field>
+        <div>
+          <app-item-selection-list [possibleItems]="possibleSingleChoiceFields()" [(selectionItem)]="selectedSingleChoiceFields" [itemName]="'Single Choice Fields'"/>
+        </div>
+        <mat-divider/>
+        <div>
+          <app-item-selection-list [possibleItems]="this.possibleFields()" [(selectionItem)]="this.selectedFields" [itemName]="'Fields'"/>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button matButton="filled" (click)="submitFormGroup()" [disabled]="!this.isValid()">Submit</button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

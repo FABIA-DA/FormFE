@@ -5,12 +5,19 @@
 @else if(fieldGroup !== undefined){
   <div class="content-wrapper">
     <div class="button-wrapper">
-      <button matFab aria-label="Button to edit this field group" [routerLink]="['edit-field-group', fieldGroup.id]">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button matFab aria-label="Button to delete this field group" (click)="delete()">
-        <mat-icon>delete</mat-icon>
-      </button>
+      <div class="left-button-wrapper">
+        <button matFab aria-label="Go back to the list view for field groups" [routerLink]="['/list-field-groups']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+      <div class="right-button-wrapper">
+        <button matFab aria-label="Button to edit this field group" [routerLink]="['/edit-field-group', fieldGroup.id]">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button matFab aria-label="Button to delete this field group" (click)="delete()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </div>
     <app-field-group-presentation [fieldGroup]="fieldGroup"/>
   </div>

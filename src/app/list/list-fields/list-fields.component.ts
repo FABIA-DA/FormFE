@@ -9,10 +9,11 @@ import {
   MatRow, MatRowDef, MatTable
 } from "@angular/material/table";
 import {Field, FieldService} from '../../../../core/service/field-service';
-import {Util} from '../../../../core/util';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {RouterLink} from '@angular/router';
-import {BooleanPipe} from '../../../../core/pipe/boolean-pipe';
+import {BooleanStringifyPipe} from '../../../../core/pipe/boolean-stringify-pipe';
+import {TruncatePipe} from '../../../../core/pipe/truncate-pipe';
+import {OptionalStringPipe} from '../../../../core/pipe/optional-string-pipe';
 
 @Component({
   selector: 'app-list-fields',
@@ -30,7 +31,9 @@ import {BooleanPipe} from '../../../../core/pipe/boolean-pipe';
     MatHeaderCellDef,
     MatProgressBar,
     RouterLink,
-    BooleanPipe
+    BooleanStringifyPipe,
+    TruncatePipe,
+    OptionalStringPipe
   ],
   templateUrl: './list-fields.component.html',
   styleUrl: './list-fields.component.scss'
@@ -50,6 +53,4 @@ export class ListFields implements OnInit {
       this.loading.set(false);
     }
   }
-
-  protected readonly Util = Util;
 }

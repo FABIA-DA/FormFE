@@ -43,7 +43,7 @@ export class FieldGroupDetails implements OnInit,OnDestroy{
 
       this.loading.set(true);
       try{
-        await this.fieldGroupService.getFieldGroupByIdAsync(id);
+        this.fieldGroup.set(await this.fieldGroupService.getFieldGroupByIdAsync(id));
       }
       finally{
         this.loading.set(false);

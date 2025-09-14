@@ -9,9 +9,10 @@ import {
   MatTable
 } from '@angular/material/table';
 import {FieldType, FieldTypeService} from '../../../../core/service/field-type-service';
-import {Util} from '../../../../core/util'
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {RouterLink} from '@angular/router';
+import {OptionalStringPipe} from '../../../../core/pipe/optional-string-pipe';
+import {TruncatePipe} from '../../../../core/pipe/truncate-pipe';
 
 @Component({
   selector: 'app-list-field-types',
@@ -28,7 +29,9 @@ import {RouterLink} from '@angular/router';
     MatRowDef,
     MatRow,
     MatProgressBar,
-    RouterLink
+    RouterLink,
+    OptionalStringPipe,
+    TruncatePipe
   ],
   templateUrl: './list-field-types.html',
   styleUrl: './list-field-types.scss'
@@ -48,6 +51,4 @@ export class ListFieldTypes implements OnInit {
       this.loading.set(false);
     }
   }
-
-  protected readonly Util = Util;
 }

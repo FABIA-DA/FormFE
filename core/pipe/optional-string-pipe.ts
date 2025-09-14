@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class OptionalStringPipe implements PipeTransform {
 
-  transform(value: string | null | undefined): string {
+  public transform(value: string | null | undefined): string {
     return value == null ? '-' : value;
   }
 

@@ -9,7 +9,7 @@ import {
   Validators
 } from '@angular/forms';
 import {MatFormField, MatInputModule, MatLabel} from '@angular/material/input';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatFabButton} from '@angular/material/button';
 import {SnackbarService} from '../../../../core/service/snackbar-service';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ItemSelectionList} from '../../../../core/shared/item-selection-list/item-selection-list.component';
@@ -18,9 +18,10 @@ import {Field, FieldService} from '../../../../core/service/field-service';
 import {Option, SingleChoiceField, SingleChoiceFieldService} from '../../../../core/service/single-choice-field-service';
 import {IdType} from '../../../../core/service/base-service';
 import {MatProgressBar} from '@angular/material/progress-bar';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {MatDivider} from '@angular/material/divider';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-edit-single-choice-field',
@@ -39,6 +40,9 @@ import {MatDivider} from '@angular/material/divider';
     AddMoreButton,
     MatProgressBar,
     MatDivider,
+    MatFabButton,
+    MatIcon,
+    RouterLink,
   ],
   templateUrl: './edit-single-choice-field.component.html',
   styleUrl: './edit-single-choice-field.component.scss'
@@ -59,11 +63,11 @@ export class EditSingleChoiceField implements OnInit, OnDestroy {
   });
   protected readonly possibleFields: WritableSignal<Field[]> = signal([]);
   protected readonly processing: WritableSignal<boolean> = signal(false);
-  private readonly singleChoiceField: WritableSignal<SingleChoiceField | undefined> = signal(undefined);
+  protected readonly singleChoiceField: WritableSignal<SingleChoiceField | undefined> = signal(undefined);
   protected readonly isUpdate: Signal<boolean> = computed(() => {
     return this.singleChoiceField() !== undefined;
   });
-  private readonly originalOptions: boolean[] = [];
+  private readonly editedOptions: boolean[] = [];
   private readonly change: Signal<any> = toSignal(this.singleChoiceFieldForm.valueChanges);
   private readonly snackbar: SnackbarService = inject(SnackbarService);
   private readonly singleChoiceFieldService: SingleChoiceFieldService = inject(SingleChoiceFieldService);
@@ -110,13 +114,15 @@ export class EditSingleChoiceField implements OnInit, OnDestroy {
     const options: FormArray<AbstractControl<string | null>> = this.options;
     const savedOptions: Option[] = field.options;
     for(let i: number = 0; i < savedOptions.length; i++){
-      this.originalOptions.push(true);
+      this.editedOptions.push(true);
       if(i < options.length){
         this.setOptions(options, savedOptions, i);
         continue;
       }
 
-      this.addOption();
+      this.options.push(
+        this.createOption()
+      );
       this.fields.push(EditSingleChoiceField.getFieldSignal());
       this.setOptions(options, savedOptions, i);
     }
@@ -148,13 +154,13 @@ export class EditSingleChoiceField implements OnInit, OnDestroy {
       this.createOption()
     );
     this.fields.push(EditSingleChoiceField.getFieldSignal());
-    this.originalOptions.push(false);
+    this.editedOptions.push(false);
   }
 
   protected deleteOption(id: number): void {
     this.options.removeAt(id);
     this.fields.splice(id, 1);
-    this.originalOptions.pop();
+    this.editedOptions.pop();
   }
 
   protected async submitFormField(): Promise<void> {
@@ -196,8 +202,8 @@ export class EditSingleChoiceField implements OnInit, OnDestroy {
         const oldOptions: {id: IdType, name: string, fieldIds: IdType[]}[] = [];
         const newOptions: {name: string, fieldIds: IdType[]}[] = [];
 
-        for(let i: number = 0; i < this.originalOptions.length; i++) {
-          if(this.originalOptions[i]){
+        for(let i: number = 0; i < this.editedOptions.length; i++) {
+          if(this.editedOptions[i]){
             oldOptions.push({
               id: this.singleChoiceField()!.options[i].id,
               name: options[i].name,

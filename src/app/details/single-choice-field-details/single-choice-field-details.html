@@ -5,12 +5,19 @@
 @else if(singleChoiceField !== undefined){
   <div class="content-wrapper">
     <div class="button-wrapper">
-      <button matFab aria-label="Button to edit this single choice field" [routerLink]="['edit-single-choice-field', singleChoiceField.id]">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button matFab aria-label="Button to delete this single choice field" (click)="delete()">
-        <mat-icon>delete</mat-icon>
-      </button>
+      <div class="left-button-wrapper">
+        <button matFab aria-label="Go back to the list view for single choice fields" [routerLink]="['/list-single-choice-fields']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+      <div class="right-button-wrapper">
+        <button matFab aria-label="Button to edit this single choice field" [routerLink]="['/edit-single-choice-field', singleChoiceField.id]">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button matFab aria-label="Button to delete this single choice field" (click)="delete()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </div>
     <app-single-choice-field-presentation [singleChoiceField]="singleChoiceField"/>
   </div>

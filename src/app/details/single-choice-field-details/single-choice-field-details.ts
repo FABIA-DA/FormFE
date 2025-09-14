@@ -4,7 +4,6 @@ import {SnackbarService} from '../../../../core/service/snackbar-service';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {IdType} from '../../../../core/service/base-service';
-import {id} from 'zod/v4/locales';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {MatFabButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';

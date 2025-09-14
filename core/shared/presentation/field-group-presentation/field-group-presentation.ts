@@ -13,5 +13,5 @@ import {FieldPresentation} from '../field-presentation/field-presentation';
   styleUrl: './field-group-presentation.scss'
 })
 export class FieldGroupPresentation {
-  public fieldGroup: InputSignal<FieldGroup> = input.required();
+  public readonly fieldGroup: InputSignal<FieldGroup> = input.required();
 }

@@ -3,8 +3,7 @@ import {MatCard, MatCardActions, MatCardContent, MatCardTitle} from '@angular/ma
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatError, MatFormField, MatInputModule, MatLabel} from '@angular/material/input';
 import {MatCheckbox} from '@angular/material/checkbox';
-import {MatOption, MatSelect} from '@angular/material/select';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatFabButton} from '@angular/material/button';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {SnackbarService} from '../../../../core/service/snackbar-service';
 import {Field, FieldService} from '../../../../core/service/field-service';
@@ -12,9 +11,10 @@ import {FieldType, FieldTypeService} from '../../../../core/service/field-type-s
 import {ItemSelectionList} from '../../../../core/shared/item-selection-list/item-selection-list.component';
 import {MatDivider} from '@angular/material/divider';
 import {MatProgressBar} from '@angular/material/progress-bar';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {IdType} from '../../../../core/service/base-service';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-edit-field',
@@ -33,6 +33,9 @@ import {IdType} from '../../../../core/service/base-service';
     ItemSelectionList,
     MatDivider,
     MatProgressBar,
+    RouterLink,
+    MatIcon,
+    MatFabButton,
   ],
   templateUrl: './edit-field.component.html',
   styleUrl: './edit-field.component.scss',
@@ -54,7 +57,7 @@ export class EditField implements OnInit {
   protected readonly fieldTypeRequired: boolean = true;
   protected readonly fieldTypeDirty: WritableSignal<boolean> = signal(false);
   protected readonly processing: WritableSignal<boolean> = signal(false);
-  private readonly field: WritableSignal<Field | undefined> = signal(undefined);
+  protected readonly field: WritableSignal<Field | undefined> = signal(undefined);
   protected readonly isUpdate: Signal<boolean> = computed(() => {
     return this.field() !== undefined;
   });
@@ -94,6 +97,7 @@ export class EditField implements OnInit {
     this.fieldForm.get('name')?.setValue(this.field()?.name);
     this.fieldForm.get('description')?.setValue(this.field()?.description);
     this.fieldForm.get('isOptional')?.setValue(this.field()?.isOptional);
+    this.selectedFieldType.set(this.field()?.type);
   }
 
   protected async onSubmit(): Promise<void>

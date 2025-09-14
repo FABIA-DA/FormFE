@@ -5,31 +5,24 @@ import {
   Group,
   GroupListPresentation,
   GroupService,
-  GroupZod,
-  MinimalGroupZod
 } from '../../../../core/service/group-service';
 import {SnackbarService} from '../../../../core/service/snackbar-service';
-import {Form, FormListPresentation, FormService, FormZod, MinimalFormZod} from '../../../../core/service/form-service';
+import {FormListPresentation, FormService} from '../../../../core/service/form-service';
 import {MatCardModule} from '@angular/material/card';
 import {MatError, MatFormField} from '@angular/material/form-field';
 import {MatInput, MatLabel} from '@angular/material/input';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatFabButton} from '@angular/material/button';
 import {ItemSelectionList} from '../../../../core/shared/item-selection-list/item-selection-list.component';
-import {IdType, IdTypeZod} from '../../../../core/service/base-service';
+import {IdType} from '../../../../core/service/base-service';
 import {MatDivider} from '@angular/material/divider';
-import {MatDialog} from '@angular/material/dialog';
-import {DialogItemData, DialogSelectItem} from '../../../../core/shared/dialog-select-item/dialog-select-item';
-import {FieldGroupZod} from '../../../../core/service/field-group-service';
-import {FieldZod} from '../../../../core/service/field-service';
-import {OptionZod, SingleChoiceFieldZod} from '../../../../core/service/single-choice-field-service';
-import {FieldTypeZod} from '../../../../core/service/field-type-service';
 import {MatProgressBar} from '@angular/material/progress-bar';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {Subscription} from 'rxjs';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-edit-group',
-  imports: [MatCardModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton, ItemSelectionList, MatDivider, MatProgressBar],
+  imports: [MatCardModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton, ItemSelectionList, MatDivider, MatProgressBar, MatFabButton, MatIcon, RouterLink],
   templateUrl: './edit-group.component.html',
   styleUrl: './edit-group.component.scss',
   standalone: true
@@ -49,7 +42,7 @@ export class EditGroup implements OnInit, OnDestroy {
   protected readonly possibleForms: WritableSignal<FormListPresentation[]> = signal([]);
   protected readonly selectedForms: WritableSignal<FormListPresentation[]> = signal([]);
   protected readonly processing: WritableSignal<boolean> = signal(false);
-  private readonly group: WritableSignal<Group | undefined> = signal(undefined);
+  protected readonly group: WritableSignal<Group | undefined> = signal(undefined);
   protected readonly isUpdate: Signal<boolean> = computed(() => {
     return this.group() !== undefined;
   });
@@ -73,6 +66,7 @@ export class EditGroup implements OnInit, OnDestroy {
       this.processing.set(true);
       try{
         this.group.set(await this.groupService.getGroupByIdAsync(id));
+        this.setFormValues();
       }
       finally{
         this.processing.set(false);
@@ -84,6 +78,26 @@ export class EditGroup implements OnInit, OnDestroy {
     for(const subscription of this.subscriptions) {
       subscription.unsubscribe();
     }
+  }
+
+  private setFormValues(): void {
+    const group: Group | undefined = this.group();
+
+    if(group === undefined){
+      return;
+    }
+
+    this.groupForm.get('name')?.setValue(group.name);
+
+    const parent = this.possibleGroups().filter(g => group.parentId === g.id);
+    const selectedSubgroups = group.subgroups.map(g => g.id);
+    const subgroups = this.possibleGroups().filter(g => selectedSubgroups.includes(g.id));
+    const selectedForms = group.forms.map(f => f.id);
+    const forms = this.possibleForms().filter(f => selectedForms.includes(f.id));
+
+    this.selectedParent.set(parent.length === 0 ? undefined : parent[0]);
+    this.selectedSubgroups.set(subgroups);
+    this.selectedForms.set(forms);
   }
 
   protected async onSubmit(): Promise<void> {

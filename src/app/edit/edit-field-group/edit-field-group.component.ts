@@ -3,20 +3,21 @@ import {MatCardModule} from '@angular/material/card';
 import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {ItemSelectionList} from '../../../../core/shared/item-selection-list/item-selection-list.component';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatFabButton} from '@angular/material/button';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {SnackbarService} from '../../../../core/service/snackbar-service';
 import {FieldGroup, FieldGroupService} from '../../../../core/service/field-group-service';
 import {
-  SingleChoiceField, SingleChoiceFieldListPresentation,
+  SingleChoiceFieldListPresentation,
   SingleChoiceFieldService
 } from '../../../../core/service/single-choice-field-service';
 import {Field, FieldService} from '../../../../core/service/field-service';
 import {IdType} from '../../../../core/service/base-service';
 import {MatDivider} from '@angular/material/divider';
 import {MatProgressBar} from '@angular/material/progress-bar';
-import {ActivatedRoute, ActivatedRouteSnapshot} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {Subscription} from 'rxjs';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-edit-field-group',
@@ -31,6 +32,9 @@ import {Subscription} from 'rxjs';
     MatButton,
     MatDivider,
     MatProgressBar,
+    MatFabButton,
+    MatIcon,
+    RouterLink,
   ],
   templateUrl: './edit-field-group.component.html',
   styleUrl: './edit-field-group.component.scss',
@@ -48,7 +52,7 @@ export class EditFieldGroup implements OnInit, OnDestroy {
     return this.name.valid;
   });
   protected readonly processing: WritableSignal<boolean> = signal(false);
-  private readonly fieldGroup: WritableSignal<FieldGroup | undefined> = signal(undefined);
+  protected readonly fieldGroup: WritableSignal<FieldGroup | undefined> = signal(undefined);
   protected readonly isUpdate: Signal<boolean> = computed(() => {
     return this.fieldGroup() !== undefined;
   });
@@ -65,25 +69,41 @@ export class EditFieldGroup implements OnInit, OnDestroy {
     this.possibleSingleChoiceFields.set(await this.singleChoiceFieldService.getAllSingleChoiceFieldsAsync());
     this.subscriptions.push(this.activatedRoute.params.subscribe(async params => {
       const id: IdType | undefined = params['id'];
-      if(id === undefined){
+      if (id === undefined) {
         this.fieldGroup.set(undefined);
         return;
       }
 
       this.processing.set(true);
-      try{
+      try {
         this.fieldGroup.set(await this.fieldGroupService.getFieldGroupByIdAsync(id));
-      }
-      finally{
+        this.setFormValues();
+      } finally {
         this.processing.set(false);
       }
     }));
   }
 
   public ngOnDestroy(): void {
-    for(const subscription of this.subscriptions) {
+    for (const subscription of this.subscriptions) {
       subscription.unsubscribe();
     }
+  }
+
+  private setFormValues(): void {
+    const fieldGroup: FieldGroup | undefined = this.fieldGroup();
+
+    if (fieldGroup === undefined) {
+      return;
+    }
+
+    this.name.setValue(fieldGroup.name);
+
+    const selectedFields = fieldGroup.singleChoiceFields.map(f => f.id);
+    const singleChoiceFields = this.possibleSingleChoiceFields().filter(scf => selectedFields.includes(scf.id));
+
+    this.selectedSingleChoiceFields.set(singleChoiceFields);
+    this.selectedFields.set(fieldGroup.fields)
   }
 
   protected async submitFormGroup(): Promise<void> {
@@ -103,11 +123,10 @@ export class EditFieldGroup implements OnInit, OnDestroy {
 
     this.processing.set(true);
     try {
-      if(this.isUpdate()){
+      if (!this.isUpdate()) {
         await this.fieldGroupService.createFieldGroupAsync(name, fieldIds, singleChoiceFieldIds);
         this.resetForm();
-      }
-      else{
+      } else {
         await this.fieldGroupService.updateFieldGroupByIdAsync(this.fieldGroup()!.id, name, singleChoiceFieldIds, fieldIds);
       }
       this.snackbar.show('The field group was submitted successfully');

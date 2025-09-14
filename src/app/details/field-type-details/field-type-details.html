@@ -4,12 +4,19 @@
 } @else if (fieldType !== undefined) {
   <div class="content-wrapper">
     <div class="button-wrapper">
-      <button matFab aria-label="Button to edit this field type" [routerLink]="['edit-field-type', fieldType.id]">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button matFab aria-label="Button to delete this field type" (click)="delete()">
-        <mat-icon>delete</mat-icon>
-      </button>
+      <div class="left-button-wrapper">
+        <button matFab aria-label="Go back to the list view for field types" [routerLink]="['/list-field-types']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+      <div class="right-button-wrapper">
+        <button matFab aria-label="Button to edit this field type" [routerLink]="['/edit-field-type', fieldType.id]">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button matFab aria-label="Button to delete this field type" (click)="delete()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </div>
     <app-field-type-presentation [fieldType]="fieldType"/>
   </div>

@@ -1,19 +1,20 @@
 import {Component, computed, inject, OnDestroy, OnInit, signal, Signal, WritableSignal} from '@angular/core';
 import {MatCardModule} from '@angular/material/card';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatFabButton} from '@angular/material/button';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {SnackbarService} from '../../../../core/service/snackbar-service';
 import {Form, FormService} from '../../../../core/service/form-service';
 import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {ItemSelectionList} from '../../../../core/shared/item-selection-list/item-selection-list.component';
-import {FieldGroup, FieldGroupListPresentation, FieldGroupService} from '../../../../core/service/field-group-service';
+import {FieldGroupListPresentation, FieldGroupService} from '../../../../core/service/field-group-service';
 import {IdType} from '../../../../core/service/base-service';
-import {Group, GroupListPresentation} from '../../../../core/service/group-service';
+import {GroupListPresentation, GroupService} from '../../../../core/service/group-service';
 import {MatDivider} from '@angular/material/divider';
 import {MatProgressBar} from '@angular/material/progress-bar';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {Subscription} from 'rxjs';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-edit-form',
@@ -27,7 +28,10 @@ import {Subscription} from 'rxjs';
     MatLabel,
     ItemSelectionList,
     MatDivider,
-    MatProgressBar
+    MatProgressBar,
+    MatFabButton,
+    MatIcon,
+    RouterLink
   ],
   templateUrl: './edit-form.component.html',
   styleUrl: './edit-form.component.scss',
@@ -47,7 +51,7 @@ export class EditForm implements OnInit, OnDestroy {
   protected readonly selectedFieldGroups: WritableSignal<FieldGroupListPresentation[]> = signal([]);
   protected readonly possibleFieldGroups: WritableSignal<FieldGroupListPresentation[]> = signal([]);
   protected readonly processing: WritableSignal<boolean> = signal(false);
-  private readonly form: WritableSignal<Form | undefined> = signal(undefined);
+  protected readonly form: WritableSignal<Form | undefined> = signal(undefined);
   protected readonly isUpdate: Signal<boolean> = computed(() => {
     return this.form() !== undefined;
   });
@@ -55,10 +59,12 @@ export class EditForm implements OnInit, OnDestroy {
   private readonly snackbar: SnackbarService = inject(SnackbarService);
   private readonly formService: FormService = inject(FormService);
   private readonly fieldGroupService: FieldGroupService = inject(FieldGroupService);
+  private readonly groupService: GroupService = inject(GroupService);
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private readonly subscriptions: Subscription[] = [];
 
   public async ngOnInit(): Promise<void> {
+    this.possibleGroups.set(await this.groupService.getAllGroupsAsync());
     this.possibleFieldGroups.set(await this.fieldGroupService.getAllFieldGroupsAsync());
     this.subscriptions.push(this.activatedRoute.params.subscribe(async params => {
       const id: IdType | undefined = params['id'];
@@ -70,6 +76,7 @@ export class EditForm implements OnInit, OnDestroy {
       this.processing.set(true);
       try{
         this.form.set(await this.formService.getFormByIdAsync(id));
+        this.setFormValues();
       }
       finally {
         this.processing.set(false);
@@ -81,6 +88,27 @@ export class EditForm implements OnInit, OnDestroy {
     for(const subscription of this.subscriptions) {
       subscription.unsubscribe();
     }
+  }
+
+  private setFormValues(): void {
+    const form: Form | undefined = this.form();
+
+    if(!form){
+      return;
+    }
+
+    const groups = this.possibleGroups().filter(g => {
+      return g.id === form.groupId;
+    });
+
+    const selectedFieldGroups = form.fieldGroups.map(fg => fg.id);
+    const fieldGroups = this.possibleFieldGroups().filter(fg => {
+      return selectedFieldGroups.includes(fg.id)
+    });
+
+    this.formForm.get('name')?.setValue(form.name);
+    this.selectedGroup.set(groups.length === 0 ? undefined : groups[0]);
+    this.selectedFieldGroups.set(fieldGroups);
   }
 
   protected async submitForm(): Promise<void>{

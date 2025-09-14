@@ -1,35 +1,44 @@
-@if (this.processing()) {
-  <mat-progress-bar mode="indeterminate"/>
-} @else {
-  <mat-card>
-    <mat-card-title>{{ this.isUpdate() ? 'Update' : 'Add' }} Group</mat-card-title>
-    <mat-card-content>
-      <form [formGroup]="groupForm">
-        <mat-form-field>
-          <mat-label>Name</mat-label>
-          <input type="text" matInput formControlName="name">
-          @if (groupForm.get('name')?.hasError('required')) {
-            <mat-error>Name is required</mat-error>
-          }
-        </mat-form-field>
-        <div>
-          <app-item-selection-list [possibleItems]="this.possibleGroups()" [(selectionItem)]="this.selectedParent"
-                                   [itemName]="'Parent Group'"/>
-        </div>
-        <mat-divider/>
-        <div>
-          <app-item-selection-list [possibleItems]="this.possibleGroups()" [(selectionItem)]="this.selectedSubgroups"
-                                   [itemName]="'Subgroups'"/>
-        </div>
-        <mat-divider/>
-        <div>
-          <app-item-selection-list [possibleItems]="this.possibleForms()" [(selectionItem)]="this.selectedForms"
-                                   [itemName]="'Forms'"/>
-        </div>
-      </form>
-    </mat-card-content>
-    <mat-card-actions>
-      <button matButton="filled" (click)="onSubmit()" [disabled]="!isValid()">Submit</button>
-    </mat-card-actions>
-  </mat-card>
-}
+<div class="content-wrapper">
+  <div class="button-wrapper">
+    @if(this.isUpdate()){
+      <button matFab aria-label="Go back to the previously selected group" [routerLink]="['/group-details', this.group()!.id]">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    }
+  </div>
+  @if (this.processing()) {
+    <mat-progress-bar mode="indeterminate"/>
+  } @else {
+    <mat-card>
+      <mat-card-title>{{ this.isUpdate() ? 'Update' : 'Add' }} Group</mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="groupForm">
+          <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input type="text" matInput formControlName="name">
+            @if (groupForm.get('name')?.hasError('required')) {
+              <mat-error>Name is required</mat-error>
+            }
+          </mat-form-field>
+          <div>
+            <app-item-selection-list [possibleItems]="this.possibleGroups()" [(selectionItem)]="this.selectedParent"
+                                     [itemName]="'Parent Group'"/>
+          </div>
+          <mat-divider/>
+          <div>
+            <app-item-selection-list [possibleItems]="this.possibleGroups()" [(selectionItem)]="this.selectedSubgroups"
+                                     [itemName]="'Subgroups'"/>
+          </div>
+          <mat-divider/>
+          <div>
+            <app-item-selection-list [possibleItems]="this.possibleForms()" [(selectionItem)]="this.selectedForms"
+                                     [itemName]="'Forms'"/>
+          </div>
+        </form>
+      </mat-card-content>
+      <mat-card-actions>
+        <button matButton="filled" (click)="onSubmit()" [disabled]="!isValid()">Submit</button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

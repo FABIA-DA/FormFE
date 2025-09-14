@@ -3,5 +3,7 @@
 }
 
 div.button-wrapper {
-  float: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }

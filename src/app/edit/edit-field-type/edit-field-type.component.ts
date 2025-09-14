@@ -6,22 +6,23 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import {SnackbarService} from '../../../../core/service/snackbar-service';
 import {MatError, MatFormField} from '@angular/material/form-field';
 import {MatInput, MatLabel} from '@angular/material/input';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatFabButton} from '@angular/material/button';
 import {MatProgressBar} from '@angular/material/progress-bar';
-import {ActivatedRoute, Params} from '@angular/router';
-import {Observable, Subscription} from 'rxjs';
+import {ActivatedRoute, RouterLink} from '@angular/router';
+import {Subscription} from 'rxjs';
 import {IdType} from '../../../../core/service/base-service';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   standalone: true,
   selector: 'app-edit-field-type',
-  imports: [MatCardModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton, MatProgressBar],
+  imports: [MatCardModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, MatButton, MatProgressBar, MatFabButton, MatIcon, RouterLink],
   templateUrl: './edit-field-type.component.html',
   styleUrl: './edit-field-type.component.scss'
 })
-export class EditFieldType implements OnInit, OnDestroy{
+export class EditFieldType implements OnInit, OnDestroy {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
-  private readonly fieldType: WritableSignal<FieldType | undefined> = signal(undefined);
+  protected readonly fieldType: WritableSignal<FieldType | undefined> = signal(undefined);
   protected readonly isUpdate: Signal<boolean> = computed(() => {
     return this.fieldType() !== undefined;
   });
@@ -31,8 +32,8 @@ export class EditFieldType implements OnInit, OnDestroy{
     regex: ['', Validators.required]
   });
   protected readonly isValid: Signal<boolean> = computed(() => {
-      this.valueChanged();
-      return this.fieldTypeForm.valid;
+    this.valueChanged();
+    return this.fieldTypeForm.valid;
   });
   protected readonly processing: WritableSignal<boolean> = signal(false);
   private readonly valueChanged: Signal<any> = toSignal(this.fieldTypeForm.valueChanges);
@@ -44,23 +45,22 @@ export class EditFieldType implements OnInit, OnDestroy{
   public ngOnInit(): void {
     this.subscriptions.push(this.activatedRoute.params.subscribe(async params => {
       const id: IdType | undefined = params['id'];
-      if(id === undefined){
+      if (id === undefined) {
         this.fieldType.set(undefined);
         return;
       }
       this.processing.set(true);
-      try{
+      try {
         this.fieldType.set(await this.fieldTypeService.getFieldTypeByIdAsync(id));
         this.setFormValues();
-      }
-      finally{
+      } finally {
         this.processing.set(false);
       }
     }));
   }
 
   public ngOnDestroy(): void {
-    for(const subscription of this.subscriptions){
+    for (const subscription of this.subscriptions) {
       subscription.unsubscribe();
     }
   }
@@ -72,7 +72,7 @@ export class EditFieldType implements OnInit, OnDestroy{
   }
 
   protected async onSubmit(): Promise<void> {
-    if(!this.isValid()){
+    if (!this.isValid()) {
       this.snackbar.show('The form is still invalid...');
       return;
     }
@@ -83,24 +83,22 @@ export class EditFieldType implements OnInit, OnDestroy{
 
     description = description?.length === 0 ? null : description;
 
-    if(!name
-    || !regex){
+    if (!name
+      || !regex) {
       this.snackbar.show('Some fields are still invalid...');
       return;
     }
 
     this.processing.set(true);
-    try{
-      if(!this.isUpdate()){
+    try {
+      if (!this.isUpdate()) {
         await this.fieldTypeService.createFieldTypeAsync(name, description, regex);
         this.fieldTypeForm.reset();
-      }
-      else{
+      } else {
         await this.fieldTypeService.updateFieldTypeAsync(this.fieldType()!.id, name, description, regex);
       }
       this.snackbar.show('Field type was submitted successfully.');
-    }
-    finally {
+    } finally {
       this.processing.set(false);
     }
   }

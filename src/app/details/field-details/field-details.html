@@ -5,12 +5,19 @@
 @else if(field !== undefined) {
   <div class="content-wrapper">
     <div class="button-wrapper">
-      <button matFab aria-label="Button to edit this field" [routerLink]="['edit-field', field.id]">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button matFab aria-label="Button to delete this field" (click)="delete()">
-        <mat-icon>delete</mat-icon>
-      </button>
+      <div class="left-button-wrapper">
+        <button matFab aria-label="Go back to the list view for fields" [routerLink]="['/list-fields']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+      <div class="right-button-wrapper">
+        <button matFab aria-label="Button to edit this field" [routerLink]="['/edit-field', field.id]">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button matFab aria-label="Button to delete this field" (click)="delete()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </div>
     <app-field-presentation [field]="field"/>
   </div>

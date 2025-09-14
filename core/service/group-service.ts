@@ -1,6 +1,6 @@
 import {BaseService, IdType, IdTypeZod} from './base-service';
 import {z} from 'zod';
-import {FormZod, MinimalFormZod} from './form-service';
+import {FormZod} from './form-service';
 import {Injectable} from '@angular/core';
 import {firstValueFrom} from 'rxjs';
 
@@ -81,7 +81,7 @@ const SubgroupZod = MinimalGroupZod.extend({});
 export type Subgroup = z.infer<typeof SubgroupZod>;
 
 export const GroupZod = MinimalGroupZod.extend({
-  subGroups: z.array(SubgroupZod),
+  subgroups: z.array(SubgroupZod),
   forms: z.array(FormZod)
 });
 

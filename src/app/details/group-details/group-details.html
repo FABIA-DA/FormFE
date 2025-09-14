@@ -5,12 +5,19 @@
 @else if(group !== undefined){
   <div class="content-wrapper">
     <div class="button-wrapper">
-      <button matFab aria-label="Button to edit this group" [routerLink]="['edit-group', group.id]">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button matFab aria-label="Button to delete this group" (click)="delete()">
-        <mat-icon>delete</mat-icon>
-      </button>
+      <div class="left-button-wrapper">
+        <button matFab aria-label="Go back to the list view for groups" [routerLink]="['/list-groups']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+      <div class="right-button-wrapper">
+        <button matFab aria-label="Button to edit this group" [routerLink]="['/edit-group', group.id]">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button matFab aria-label="Button to delete this group" (click)="delete()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </div>
     <app-group-presentation [group]="group"/>
   </div>
