@@ -65,7 +65,7 @@ export class GroupDetails implements OnInit, OnDestroy {
     try{
       await this.groupService.deleteGroupAsync(group.id);
       this.snackbar.show('Group was deleted successfully');
-      await this.router.navigate(['/home']);
+      await this.router.navigate(['list-groups']);
     }
     finally {
       this.loading.set(false);

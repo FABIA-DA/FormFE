@@ -65,7 +65,7 @@ export class FieldTypeDetails implements OnInit, OnDestroy{
     try{
       await this.fieldTypeService.deleteFieldTypeAsync(fieldType.id);
       this.snackbar.show('Field Type was successfully deleted');
-      await this.router.navigate(['/home']);
+      await this.router.navigate(['list-field-types']);
     }
     finally{
       this.loading.set(false);

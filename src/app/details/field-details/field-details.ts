@@ -64,7 +64,7 @@ export class FieldDetails implements OnInit, OnDestroy {
     try{
       await this.fieldService.deleteFieldAsync(field.id);
       this.snackbar.show('Field was deleted successfully');
-      await this.router.navigate(['/home']);
+      await this.router.navigate(['list-fields']);
     }
     finally{
       this.loading.set(false);

@@ -1,7 +1,7 @@
 <div class="content-wrapper">
   <div class="button-wrapper">
     @if(this.isUpdate()){
-      <button matFab aria-label="Go back to the previously selected field type" [routerLink]="['/field-type-details', this.fieldType()!.id]">
+      <button matFab aria-label="Go back to the previously selected field type" [routerLink]="['field-type-details', this.fieldType()!.id]">
         <mat-icon>arrow_back</mat-icon>
       </button>
     }

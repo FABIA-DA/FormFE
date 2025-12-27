@@ -67,7 +67,7 @@ export class SingleChoiceFieldDetails implements OnInit, OnDestroy {
     try{
       await this.singleChoiceFieldService.deleteSingleChoiceFieldByIdAsync(singleChoiceField.id);
       this.snackbar.show('Single choice field was deleted successfully');
-      await this.router.navigate(['/home']);
+      await this.router.navigate(['list-single-choice-fields']);
     }
     finally{
       this.loading.set(false);

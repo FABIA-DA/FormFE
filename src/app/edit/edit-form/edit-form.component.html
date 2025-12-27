@@ -1,7 +1,7 @@
 <div class="content-wrapper">
   <div class="button-wrapper">
     @if(this.isUpdate()){
-      <button matFab aria-label="Go back to the previously selected form" [routerLink]="['/form-details', this.form()!.id]">
+      <button matFab aria-label="Go back to the previously selected form" [routerLink]="['form-details', this.form()!.id]">
         <mat-icon>arrow_back</mat-icon>
       </button>
     }

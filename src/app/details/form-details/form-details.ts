@@ -65,7 +65,7 @@ export class FormDetails implements OnInit, OnDestroy{
     try{
       await this.formService.deleteFormByIdAsync(form.id);
       this.snackbar.show('Form was deleted successfully');
-      await this.router.navigate(['/home']);
+      await this.router.navigate(['list-forms']);
     }
     finally{
       this.loading.set(false);

@@ -11,6 +11,7 @@ mat-divider {
 .fields-container {
   display: flex;
   flex-direction: column;
+  padding: 0.5rem 0 0.5rem 0;
 }
 
 .field-wrapper {
@@ -18,30 +19,28 @@ mat-divider {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  padding: 0.2rem;
 }
 
-.field-wrapper:hover {
-  animation-name: hover-animation;
-  animation-duration: 200ms;
-  animation-iteration-count: initial;
-  animation-timing-function: linear;
+.field-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+      var(--mat-sys-primary),
+      var(--mat-sys-tertiary)
+  );
+  opacity: 0;
+  transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  border-radius: 20rem 8rem;
 }
 
-@keyframes hover-animation {
-  100% {
-    background: linear-gradient(to right, #afafaf 0%, #d8d8d8 30%, rgba(255, 255, 255, 0) 60%);
-  }
-  75% {
-    background: linear-gradient(to right, #afafaf 15%, #d8d8d8 45%, rgba(255, 255, 255, 0) 75%);
-  }
-  50% {
-    background: linear-gradient(to right, #afafaf 30%, #d8d8d8 60%, rgba(255, 255, 255, 0) 90%);
-  }
-  25% {
-    background: linear-gradient(to right, #afafaf 0%, #d8d8d8 30%, rgba(255, 255, 255, 0) 60%);
-  }
+.field-wrapper:hover::before {
+  opacity: 0.3;
 }
 
 .field-wrapper > button {
-  color: red;
+  color: var(--mat-sys-error);
 }

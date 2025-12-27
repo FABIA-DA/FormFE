@@ -1,9 +1,5 @@
-th, td {
-  --color: var(--mat-sys-secondary);
-}
-
 th {
-  color: var(--color);
+  color: var(--mat-sys-secondary);
 }
 
 th, td {
@@ -18,5 +14,5 @@ tr:first-child > * {
 tr:last-child > td {
   border-left-width: 1px;
   border-left-style: solid;
-  border-left-color: var(--color);
+  border-left-color: var(--mat-sys-secondary);
 }

@@ -6,12 +6,12 @@
   <div class="content-wrapper">
     <div class="button-wrapper">
       <div class="left-button-wrapper">
-        <button matFab aria-label="Go back to the list view for field groups" [routerLink]="['/list-field-groups']">
+        <button matFab aria-label="Go back to the list view for field groups" [routerLink]="'list-field-groups'">
           <mat-icon>arrow_back</mat-icon>
         </button>
       </div>
       <div class="right-button-wrapper">
-        <button matFab aria-label="Button to edit this field group" [routerLink]="['/edit-field-group', fieldGroup.id]">
+        <button matFab aria-label="Button to edit this field group" [routerLink]="['edit-field-group', fieldGroup.id]">
           <mat-icon>edit</mat-icon>
         </button>
         <button matFab aria-label="Button to delete this field group" (click)="delete()">

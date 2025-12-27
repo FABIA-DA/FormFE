@@ -1,7 +1,7 @@
 <div class="content-wrapper">
   <div class="button-wrapper">
     @if(this.isUpdate()){
-      <button matFab aria-label="Go back to the previously selected single choice field" [routerLink]="['/single-choice-field-details', this.singleChoiceField()!.id]">
+      <button matFab aria-label="Go back to the previously selected single choice field" [routerLink]="['single-choice-field-details', this.singleChoiceField()!.id]">
         <mat-icon>arrow_back</mat-icon>
       </button>
     }

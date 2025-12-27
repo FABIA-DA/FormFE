@@ -1,7 +1,7 @@
 <div class="content-wrapper">
   <div class="button-wrapper">
     @if(this.isUpdate()){
-      <button matFab aria-label="Go back to the previously selected group" [routerLink]="['/group-details', this.group()!.id]">
+      <button matFab aria-label="Go back to the previously selected group" [routerLink]="['group-details', this.group()!.id]">
         <mat-icon>arrow_back</mat-icon>
       </button>
     }

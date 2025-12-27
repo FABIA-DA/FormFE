@@ -144,6 +144,7 @@ export class EditForm implements OnInit, OnDestroy {
 
   private resetForm(): void {
     this.formForm.reset();
+    this.selectedGroup.set(undefined);
     this.selectedFieldGroups.set([]);
   }
 }

@@ -1,4 +1,4 @@
-import {Component, computed, inject, OnInit, signal, Signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, OnDestroy, OnInit, signal, Signal, WritableSignal} from '@angular/core';
 import {MatCard, MatCardActions, MatCardContent, MatCardTitle} from '@angular/material/card';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatError, MatFormField, MatInputModule, MatLabel} from '@angular/material/input';
@@ -41,7 +41,7 @@ import {MatIcon} from '@angular/material/icon';
   styleUrl: './edit-field.component.scss',
   standalone: true
 })
-export class EditField implements OnInit {
+export class EditField implements OnInit, OnDestroy {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   protected readonly fieldForm: FormGroup = this.formBuilder.group({
     name: ['', Validators.required],
@@ -71,16 +71,15 @@ export class EditField implements OnInit {
   public async ngOnInit(): Promise<void> {
     this.subscriptions.push(this.activatedRoute.params.subscribe(async params => {
       const id: IdType | undefined = params['id'];
-      if(id === undefined){
+      if (id === undefined) {
         this.field.set(undefined);
         return;
       }
       this.processing.set(true);
-      try{
+      try {
         this.field.set(await this.fieldService.getFieldByIdAsync(id));
         this.setFormValues();
-      }
-      finally{
+      } finally {
         this.processing.set(false);
       }
     }));
@@ -88,7 +87,7 @@ export class EditField implements OnInit {
   }
 
   public ngOnDestroy(): void {
-    for(const subscription of this.subscriptions){
+    for (const subscription of this.subscriptions) {
       subscription.unsubscribe();
     }
   }
@@ -100,9 +99,8 @@ export class EditField implements OnInit {
     this.selectedFieldType.set(this.field()?.type);
   }
 
-  protected async onSubmit(): Promise<void>
-  {
-    if(!this.isValid()){
+  protected async onSubmit(): Promise<void> {
+    if (!this.isValid()) {
       this.snackbar.show('The form is still invalid...');
       return;
     }
@@ -113,30 +111,27 @@ export class EditField implements OnInit {
     const type: FieldType | undefined = this.selectedFieldType();
 
     if (!name
-    || !description
-    || isOptional === null
-    || !type){
+      || isOptional === null
+      || !type) {
       this.snackbar.show('Some form fields are still invalid...');
       return;
     }
 
     this.processing.set(true);
-    try{
-      if(!this.isUpdate()){
+    try {
+      if (!this.isUpdate()) {
         await this.fieldService.createFieldAsync(type.id, name, description, isOptional);
         this.reset();
-      }
-      else {
+      } else {
         await this.fieldService.updateFieldAsync(this.field()!.id, type.id, name, description, isOptional);
       }
       this.snackbar.show('Form field was submitted successfully.');
-    }
-    finally{
+    } finally {
       this.processing.set(false);
     }
   }
 
-  private reset(){
+  private reset(): void {
     this.selectedFieldType.set(undefined);
     this.fieldForm.reset();
   }

@@ -18,26 +18,8 @@
   width: 10rem;
   height: 10rem;
   padding: 1rem;
-  border: 3px solid black;
+  border: 3px solid var(--mat-sys-outline);
   position: absolute;
   border-radius: 50%;
-}
-
-.box-container > .box{
-  animation-name: box-animation;
-  animation-iteration-count: initial;
-  animation-timing-function: ease-out;
-  animation-duration: 2s;
-}
-
-@keyframes box-animation {
-  0% {
-    background-color: red;
-  }
-  50% {
-    background-color: white;
-  }
-  100% {
-    background-color: red;
-  }
+  background: linear-gradient(red 0 33%, white 33% 66%, red 66% 100%);
 }

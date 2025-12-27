@@ -138,5 +138,6 @@ export class EditFieldGroup implements OnInit, OnDestroy {
   private resetForm(): void {
     this.name.reset();
     this.selectedFields.set([]);
+    this.selectedSingleChoiceFields.set([]);
   }
 }

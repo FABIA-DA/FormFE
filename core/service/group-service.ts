@@ -67,18 +67,19 @@ export class GroupService extends BaseService {
   }
 }
 
-export const MinimalGroupZod = z.object({
+const SubgroupZod = z.object({
   id: IdTypeZod,
+  name: z.string().nonempty()
+});
+
+export type Subgroup = z.infer<typeof SubgroupZod>;
+
+export const MinimalGroupZod = SubgroupZod.extend({
   parentId: IdTypeZod.nullable(),
-  name: z.string().nonempty(),
   parentName: z.string().nonempty().nullable()
 });
 
 export type MinimalGroup = z.infer<typeof MinimalGroupZod>;
-
-const SubgroupZod = MinimalGroupZod.extend({});
-
-export type Subgroup = z.infer<typeof SubgroupZod>;
 
 export const GroupZod = MinimalGroupZod.extend({
   subgroups: z.array(SubgroupZod),
