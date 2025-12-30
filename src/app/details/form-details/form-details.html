@@ -6,12 +6,12 @@
   <div class="content-wrapper">
     <div class="button-wrapper">
       <div class="left-button-wrapper">
-        <button matFab aria-label="Go back to the list view for forms" [routerLink]="'list-forms'">
+        <button matFab aria-label="Go back to the list view for forms" [routerLink]="'/list-forms'">
           <mat-icon>arrow_back</mat-icon>
         </button>
       </div>
       <div class="right-button-wrapper">
-        <button matFab aria-label="Button to edit this form" [routerLink]="['edit-form', form.id]">
+        <button matFab aria-label="Button to edit this form" [routerLink]="['/edit-form', form.id]">
           <mat-icon>edit</mat-icon>
         </button>
         <button matFab aria-label="Button to delete this form" (click)="delete()">

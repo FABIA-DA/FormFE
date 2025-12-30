@@ -7,20 +7,20 @@
     <app-menu-trigger [icon]="'list'" [menuTriggerFor]="list">List</app-menu-trigger>
   </mat-menu>
   <mat-menu #add="matMenu">
-    <a mat-menu-item [routerLink]="'edit-field-type'">Field Type</a>
-    <a mat-menu-item [routerLink]="'edit-field'">Field</a>
-    <a mat-menu-item [routerLink]="'edit-single-choice-field'">Single Choice Field</a>
-    <a mat-menu-item [routerLink]="'edit-field-group'">Field Group</a>
-    <a mat-menu-item [routerLink]="'edit-form'">Form</a>
-    <a mat-menu-item [routerLink]="'edit-group'">Group</a>
+    <a mat-menu-item [routerLink]="'/edit-field-type'">Field Type</a>
+    <a mat-menu-item [routerLink]="'/edit-field'">Field</a>
+    <a mat-menu-item [routerLink]="'/edit-single-choice-field'">Single Choice Field</a>
+    <a mat-menu-item [routerLink]="'/edit-field-group'">Field Group</a>
+    <a mat-menu-item [routerLink]="'/edit-form'">Form</a>
+    <a mat-menu-item [routerLink]="'/edit-group'">Group</a>
   </mat-menu>
   <mat-menu #list="matMenu">
-    <a mat-menu-item [routerLink]="'list-field-types'">Field Types</a>
-    <a mat-menu-item [routerLink]="'list-fields'">Fields</a>
-    <a mat-menu-item [routerLink]="'list-single-choice-fields'">Single Choice Fields</a>
-    <a mat-menu-item [routerLink]="'list-field-groups'">Field Groups</a>
-    <a mat-menu-item [routerLink]="'list-forms'">Forms</a>
-    <a mat-menu-item [routerLink]="'list-groups'">Groups</a>
+    <a mat-menu-item [routerLink]="'/list-field-types'">Field Types</a>
+    <a mat-menu-item [routerLink]="'/list-fields'">Fields</a>
+    <a mat-menu-item [routerLink]="'/list-single-choice-fields'">Single Choice Fields</a>
+    <a mat-menu-item [routerLink]="'/list-field-groups'">Field Groups</a>
+    <a mat-menu-item [routerLink]="'/list-forms'">Forms</a>
+    <a mat-menu-item [routerLink]="'/list-groups'">Groups</a>
   </mat-menu>
   <a [routerLink]="['home']">Form Management</a>
 </mat-toolbar>
